@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+---
+
+<BaseLayout
+  title="Page Not Found"
+  description="The page you requested could not be found."
+  path="/404"
+  noindex={true}
+>
+  <Navbar client:load />
+  <main class="shell pb-24 pt-16">
+    <section class="surface mx-auto max-w-3xl px-8 py-16 text-center sm:px-12">
+      <span class="eyebrow">404</span>
+      <h1 class="mt-6 text-5xl font-semibold tracking-tight text-ink sm:text-6xl">
+        This page drifted out of orbit.
+      </h1>
+      <p class="mx-auto mt-5 max-w-xl text-lg leading-8 text-slate">
+        The link may be outdated, or the page may have moved. Head back to the homepage or
+        browse the blog for current content.
+      </p>
+      <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+        <a href="/" class="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white hover:bg-brand">
+          Go Home
+        </a>
+        <a
+          href="/blog"
+          class="rounded-full border border-line bg-white px-6 py-3 text-sm font-semibold text-ink hover:border-brand hover:text-brand"
+        >
+          Read the Blog
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

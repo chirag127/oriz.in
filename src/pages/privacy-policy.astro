@@ -1,0 +1,81 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="Read the Oriz privacy policy covering cookies, analytics, AdSense, and data collection."
+  path="/privacy-policy"
+>
+  <Navbar client:load />
+  <main class="shell pb-24 pt-12">
+    <section class="surface mx-auto max-w-4xl p-8 sm:p-12">
+      <span class="eyebrow">Privacy Policy</span>
+      <h1 class="mt-5 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Privacy and data practices at Oriz
+      </h1>
+      <div class="prose prose-lg mt-8 prose-headings:text-ink prose-p:text-slate prose-li:text-slate">
+        <p>
+          This Privacy Policy explains how Oriz collects, uses, and protects information when
+          visitors use <strong>oriz.in</strong> and related Oriz-operated properties.
+        </p>
+        <h2>Information We Collect</h2>
+        <p>
+          We may collect information you provide directly, such as your name, email address,
+          and message when you contact us. We may also collect limited technical information
+          automatically, including browser type, device information, pages visited, and
+          referring URLs.
+        </p>
+        <h2>Cookies</h2>
+        <p>
+          Oriz may use cookies or similar technologies to improve website performance, measure
+          traffic, remember preferences, and understand how visitors use the site. You can
+          control cookies through your browser settings.
+        </p>
+        <h2>Google AdSense</h2>
+        <p>
+          Oriz may use Google AdSense or other advertising services to display advertisements.
+          These third-party vendors may use cookies, including the DoubleClick cookie, to
+          serve ads based on your visit to this site and other websites. Users may opt out of
+          personalised advertising through Google Ads Settings.
+        </p>
+        <p>
+          Third-party advertising partners may collect device identifiers, IP addresses, and
+          browsing information in accordance with their own privacy policies. We encourage
+          users to review Google&apos;s advertising and privacy policies for more details.
+        </p>
+        <h2>How We Use Data</h2>
+        <ul>
+          <li>To respond to inquiries and support requests</li>
+          <li>To improve website content, design, and performance</li>
+          <li>To monitor aggregate traffic and prevent abuse</li>
+          <li>To comply with legal obligations when required</li>
+        </ul>
+        <h2>Data Sharing</h2>
+        <p>
+          We do not sell personal information. We may share data with trusted service
+          providers that help us operate the website, run analytics, or deliver advertising,
+          subject to appropriate contractual and legal safeguards.
+        </p>
+        <h2>Data Security</h2>
+        <p>
+          We use reasonable administrative and technical measures to protect information,
+          though no method of transmission or storage can be guaranteed as completely secure.
+        </p>
+        <h2>External Links</h2>
+        <p>
+          This website may link to subdomains or external services, including future Oriz
+          products. We are not responsible for the privacy practices of third-party websites.
+        </p>
+        <h2>Contact</h2>
+        <p>
+          For privacy-related questions, contact us at
+          <a href="mailto:hello@oriz.in"> hello@oriz.in</a>.
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

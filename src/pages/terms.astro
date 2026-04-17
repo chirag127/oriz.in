@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+---
+
+<BaseLayout
+  title="Terms of Use"
+  description="Read the Oriz terms of use, including site usage rules and disclaimers."
+  path="/terms"
+>
+  <Navbar client:load />
+  <main class="shell pb-24 pt-12">
+    <section class="surface mx-auto max-w-4xl p-8 sm:p-12">
+      <span class="eyebrow">Terms</span>
+      <h1 class="mt-5 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+        Terms of use for oriz.in
+      </h1>
+      <div class="prose prose-lg mt-8 prose-headings:text-ink prose-p:text-slate prose-li:text-slate">
+        <p>
+          By accessing or using <strong>oriz.in</strong>, you agree to these Terms of Use. If
+          you do not agree, please do not use the site.
+        </p>
+        <h2>Use of the Website</h2>
+        <ul>
+          <li>You may browse the site for lawful informational purposes.</li>
+          <li>You must not misuse the site, attempt unauthorised access, or disrupt service.</li>
+          <li>You must not copy, scrape, or republish content in a misleading or unlawful way.</li>
+        </ul>
+        <h2>Intellectual Property</h2>
+        <p>
+          All branding, text, design, and original content on the website are owned by Oriz
+          or used with permission, unless otherwise stated.
+        </p>
+        <h2>No Professional Advice</h2>
+        <p>
+          Content published on this site, including blog articles about finance tools or
+          calculators, is provided for general informational purposes only. It does not
+          constitute financial, legal, tax, or professional advice.
+        </p>
+        <h2>Product Availability</h2>
+        <p>
+          References to current or future products, subdomains, or marketplaces are
+          informational and may change without notice. Oriz does not guarantee continued
+          availability of any specific feature or service.
+        </p>
+        <h2>Disclaimer</h2>
+        <p>
+          The website is provided on an &quot;as is&quot; and &quot;as available&quot; basis without
+          warranties of any kind, whether express or implied. We do not guarantee that the
+          website will always be uninterrupted, error-free, or suitable for every purpose.
+        </p>
+        <h2>Limitation of Liability</h2>
+        <p>
+          To the fullest extent permitted by law, Oriz shall not be liable for any indirect,
+          incidental, consequential, or special damages arising from the use of this website.
+        </p>
+        <h2>Contact</h2>
+        <p>
+          Questions about these terms may be sent to
+          <a href="mailto:hello@oriz.in"> hello@oriz.in</a>.
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,73 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+
+const values = [
+  {
+    title: "What is Oriz",
+    body:
+      "Oriz is a technology startup and parent company that builds focused digital products. Rather than forcing everything into one app, Oriz develops specialised tools across finance, developer infrastructure, and identity."
+  },
+  {
+    title: "Vision & Mission",
+    body:
+      "The vision is to make trusted utility software more accessible across the internet. The mission is to build fast, dependable products that solve clear problems, remain easy to use, and earn trust through transparency."
+  },
+  {
+    title: "Founder Story",
+    body:
+      "Oriz began with a simple observation: people rely on a growing number of fragmented tools for money, work, and identity. The founding idea was to create a company that could launch practical products one at a time, each built with care, clean UX, and long-term usefulness instead of short-lived hype."
+  }
+];
+---
+
+<BaseLayout
+  title="About Oriz"
+  description="Learn about Oriz, the technology company behind fast, practical finance, developer, and identity tools."
+  path="/about"
+>
+  <Navbar client:load />
+  <main class="shell pb-24 pt-12">
+    <section class="space-y-6">
+      <span class="eyebrow">About</span>
+      <h1 class="max-w-3xl text-5xl font-semibold tracking-tight text-ink sm:text-6xl">
+        Oriz builds internet tools that feel useful on day one.
+      </h1>
+      <p class="section-copy max-w-3xl">
+        The company website exists to explain the direction behind the products, establish
+        trust, and give users and partners a clear line of contact.
+      </p>
+    </section>
+
+    <section class="grid gap-6 py-14">
+      {values.map((item) => (
+        <div class="surface grid gap-6 p-8 md:grid-cols-[0.32fr_0.68fr] md:items-start">
+          <h2 class="text-2xl font-semibold tracking-tight text-ink">{item.title}</h2>
+          <p class="text-base leading-8 text-slate">{item.body}</p>
+        </div>
+      ))}
+    </section>
+
+    <section class="surface grid gap-8 p-8 sm:p-10 lg:grid-cols-3">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-brand">Operating Principles</p>
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-xl font-semibold text-ink">Build with restraint</h3>
+        <p class="text-sm leading-7 text-slate">
+          Oriz prefers products that solve one real problem well before expanding into a
+          broad platform.
+        </p>
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-xl font-semibold text-ink">Earn trust over time</h3>
+        <p class="text-sm leading-7 text-slate">
+          Clean design, honest communication, stable uptime, and transparent policies are
+          treated as product features, not marketing extras.
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

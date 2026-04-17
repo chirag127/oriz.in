@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navbar from "../../components/Navbar.jsx";
+import Footer from "../../components/Footer.jsx";
+import Card from "../../components/Card.jsx";
+
+const posts = Object.values(import.meta.glob("./*.md", { eager: true })).sort(
+  (a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf()
+);
+---
+
+<BaseLayout
+  title="Oriz Blog"
+  description="SEO-friendly articles from Oriz on credit cards, EMI, SIP, FD, credit scores, GST, and practical finance tools."
+  path="/blog"
+>
+  <Navbar client:load />
+  <main class="shell pb-24 pt-12">
+    <section class="space-y-6">
+      <span class="eyebrow">Blog</span>
+      <h1 class="max-w-4xl text-5xl font-semibold tracking-tight text-ink sm:text-6xl">
+        Practical finance guides built for search and for real readers
+      </h1>
+      <p class="section-copy max-w-3xl">
+        These articles support Oriz&apos;s finance products with helpful educational content,
+        clear structure, and internal references to future tools on
+        <a href="https://finance.oriz.in" class="font-semibold text-brand"> finance.oriz.in</a>.
+      </p>
+    </section>
+    <section class="grid gap-6 py-14 lg:grid-cols-2">
+      {posts.map((post) => (
+        <Card
+          eyebrow={post.frontmatter.category}
+          title={post.frontmatter.title}
+          description={post.frontmatter.description}
+          href={post.url}
+          cta="Read full guide"
+          accent="brand"
+        />
+      ))}
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

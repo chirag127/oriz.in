@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply min-h-screen bg-hero-radial font-sans text-ink antialiased;
+}
+
+* {
+  @apply border-line;
+}
+
+a {
+  @apply transition duration-200;
+}
+
+.shell {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.surface {
+  @apply rounded-4xl border border-white/80 bg-white/80 shadow-panel backdrop-blur;
+}
+
+.eyebrow {
+  @apply inline-flex items-center rounded-full border border-brand/15 bg-brand/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-brand;
+}
+
+.section-title {
+  @apply text-3xl font-semibold tracking-tight text-ink sm:text-4xl;
+}
+
+.section-copy {
+  @apply max-w-2xl text-base leading-7 text-slate sm:text-lg;
+}
+
+.grid-fade > * {
+  animation: rise 700ms ease forwards;
+  opacity: 0;
+}
+
+.grid-fade > *:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.grid-fade > *:nth-child(3) {
+  animation-delay: 160ms;
+}
+
+.grid-fade > *:nth-child(4) {
+  animation-delay: 240ms;
+}
+
+.prose {
+  @apply prose-slate max-w-none;
+}
+
+.prose a {
+  @apply font-medium text-brand no-underline hover:text-brand-dark;
+}

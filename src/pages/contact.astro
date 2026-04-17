@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+import ContactForm from "../components/ContactForm.jsx";
+---
+
+<BaseLayout
+  title="Contact Oriz"
+  description="Contact Oriz for partnerships, product feedback, or company inquiries."
+  path="/contact"
+>
+  <Navbar client:load />
+  <main class="shell pb-24 pt-12">
+    <section class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+      <div class="space-y-5">
+        <span class="eyebrow">Contact</span>
+        <h1 class="text-5xl font-semibold tracking-tight text-ink sm:text-6xl">
+          Talk to the Oriz team
+        </h1>
+        <p class="section-copy">
+          Use the form for product feedback, business partnerships, or company questions. For
+          direct contact, email <a class="font-semibold text-brand" href="mailto:hello@oriz.in">hello@oriz.in</a>.
+        </p>
+        <div class="surface space-y-4 p-6">
+          <h2 class="text-lg font-semibold text-ink">Why reach out?</h2>
+          <ul class="space-y-3 text-sm leading-7 text-slate">
+            <li>Partnerships and integrations</li>
+            <li>Press or founder conversations</li>
+            <li>Feedback on finance, developer, or identity tools</li>
+          </ul>
+        </div>
+      </div>
+      <ContactForm client:load />
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

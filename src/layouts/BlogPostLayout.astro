@@ -1,0 +1,40 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
+import { siteConfig } from "../lib/site";
+
+const { frontmatter } = Astro.props;
+const canonicalPath = `/blog/${frontmatter.slug || Astro.url.pathname.split("/").filter(Boolean).pop()}`;
+---
+
+<BaseLayout
+  title={frontmatter.title}
+  description={frontmatter.description}
+  path={canonicalPath}
+  image={`${siteConfig.siteUrl}/og-image.svg`}
+>
+  <Navbar client:load />
+  <main class="pb-24 pt-10">
+    <div class="shell">
+      <section class="surface mx-auto max-w-4xl p-8 sm:p-12">
+        <div class="mb-10 border-b border-line pb-8">
+          <span class="eyebrow">{frontmatter.category}</span>
+          <h1 class="mt-5 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
+            {frontmatter.title}
+          </h1>
+          <p class="mt-4 max-w-3xl text-lg leading-8 text-slate">{frontmatter.description}</p>
+          <div class="mt-6 flex flex-wrap gap-3 text-sm text-slate">
+            <span>{frontmatter.publishDate}</span>
+            <span>•</span>
+            <span>{frontmatter.readTime}</span>
+          </div>
+        </div>
+        <article class="prose prose-lg prose-headings:tracking-tight prose-headings:text-ink prose-p:text-slate prose-li:text-slate prose-strong:text-ink">
+          <slot />
+        </article>
+      </section>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
