@@ -1,0 +1,83 @@
+---
+/**
+ * PageShell — the three-column navigation frame for ORIZ.IN.
+ *
+ * The site holds many content *types* (articles, guides, tools, videos,
+ * references, datasets) across many *subjects* (money, technology, life,
+ * world). Those are two independent axes, and a very large site has to keep
+ * them separate or navigation collapses into one unusable menu.
+ *
+ *   type axis    → the header nav          (few, stable)
+ *   subject axis → the left rail           (deep, always visible)
+ *   context + ad → the right rail          (collapses first)
+ *
+ * Usage:
+ *   <PageShell rail="subject" rightRail="toc">
+ *     ...page content...
+ *   </PageShell>
+ *
+ * Slots:
+ *   default    — the main column
+ *   rail       — override the left rail entirely
+ *   right      — override the right rail
+ *
+ * Both rails are optional. With neither, this degrades to the existing
+ * single-column layout, so it can be adopted page by page.
+ */
+import SubjectRail from '../components/SubjectRail.astro';
+
+interface Props {
+  /** Show the subject rail (left). Default: false. */
+  rail?: boolean;
+  /** Show the right rail. Default: false. */
+  rightRail?: boolean;
+  /** Marks the active subject slug in the rail. */
+  activeSubject?: string;
+  /** Shown in the rail footer. */
+  showRailSearch?: boolean;
+  /** Constrains the main column measure. */
+  wide?: boolean;
+}
+
+const {
+  rail = false,
+  rightRail = false,
+  activeSubject,
+  showRailSearch = true,
+  wide = false,
+} = Astro.props;
+
+const hasRight = Astro.slots.has('right');
+const showRight = rightRail && hasRight;
+---
+
+<div
+  class:list={[
+    'page-shell',
+    rail && 'page-shell--rail',
+    showRight && 'page-shell--right',
+    wide && 'page-shell--wide',
+  ]}
+>
+  {
+    rail && (
+      <div class="page-shell-rail">
+        <slot name="rail">
+          <SubjectRail activeSubject={activeSubject} showSearch={showRailSearch} />
+        </slot>
+      </div>
+    )
+  }
+
+  <div class="page-shell-main">
+    <slot />
+  </div>
+
+  {
+    showRight && (
+      <div class="page-shell-aside">
+        <slot name="right" />
+      </div>
+    )
+  }
+</div>

@@ -46,9 +46,87 @@ Do not print `.env` contents. Do not paste decrypted values into commits, issue 
 - Node.js 22.23.4+; the repository currently uses Node 24.
 - Astro 7 static output, React islands, TypeScript strict mode.
 - Use Microsoft Edge for browser automation and QA. Never use Chrome for this project.
-- Content lives in `src/content/articles`; registries live in `src/data`; pure tool logic lives in `src/lib`.
+- Content lives in `src/content/library`; registries live in `src/data`; pure tool logic lives in `src/lib`.
 - Keep secrets and personal visitor data out of Git.
 - Do not change DNS, production hosting, or deployment configuration without explicit owner authorization.
+
+## Article standard (mandatory for every new article)
+
+These articles are the substance of the site. A thin article is a defect, not a
+placeholder. Every new article must satisfy all of the following.
+
+### Depth and level
+
+- **Length: 1,800–3,000 words of prose** (excluding code, diagrams and tables).
+- **Audience: advanced.** Assume the reader already knows the basics of the topic.
+  Never explain what a database, index, replica, cache or TLS handshake *is in
+  general*. Start where the introductory material ends and go straight to the
+  mechanisms, tradeoffs, arithmetic and failure modes that practitioners get wrong.
+- **Complete coverage of the topic**, not a summary of one angle. Where a topic has
+  competing approaches, cover each and end with a decision table saying when each
+  applies.
+- Write in a direct technical register. No marketing language, no filler openings
+  ("in today's fast-moving world"), and no word may be used decoratively.
+
+### Required structural elements
+
+Every article must include **all** of these:
+
+| Element | Minimum | Notes |
+| --- | --- | --- |
+| Mermaid diagrams | 5 | Mix types: `flowchart`, `sequenceDiagram`, `stateDiagram-v2`, `erDiagram`, `mindmap`, `gantt`, `pie` |
+| Tables | 4 | Real comparison/decision tables, never decorative |
+| KaTeX formulas | 2 | Block math with `$$ … $$` |
+| Code fences | As needed | Always language-tagged (`sql`, `ts`, `bash`, `yaml`) |
+| `## Summary` | Required | 6–8 numbered takeaways, the last section |
+
+- Diagrams must explain structure, sequence or decision flow. A diagram that only
+  restates two sentences is padding and should be a table instead.
+- Every table must let a reader choose between options or see a cost. A table of
+  definitions belongs in prose.
+
+### Frontmatter rules (enforced by `src/content.config.ts`, a strict zod schema)
+
+- `title` 5–120 chars; `description` 50–240 chars; `tags` match `^[a-z0-9]+(-[a-z0-9]+)*$`, max 8.
+- `pubDate` **must not be in the future** — a future date throws *"has a future publication date"* and 500s the page.
+- The series directory must be registered in `src/data/taxonomy.ts` for that
+  category, or the page 500s with *"references unknown series"*.
+- No keys outside the schema. The schema is `.strict()`.
+- Set `difficulty: advanced`, `reviewStatus: technical-review`, `license: CC BY 4.0`.
+
+### Article URLs
+
+An article's URL is `/<domain>/<category>/<id>/` where `id` is the filename with
+its `NN-` prefix stripped. The series segment is **not** part of the URL. Deriving
+the URL by hand includes the series and produces a 404 — use `articleUrl()` from
+`src/lib/content.ts` or the rule above.
+
+### Mermaid diagrams fail silently — always verify
+
+A Mermaid syntax error does **not** fail the build. `src/lib/rehype-content.mjs`
+emits the figure with a source-code fallback, and the client renderer replaces it
+with "This diagram could not be rendered in your browser". A broken diagram ships
+unnoticed unless it is checked. Two scripts exist for this:
+
+```bash
+node scripts/check-diagrams.mjs       # static lint: catches known-bad syntax
+node scripts/check-diagrams-live.mjs  # browser sweep: asserts every figure has an <svg>
+```
+
+Run both before claiming an article is complete. The static linter is deliberately
+narrow: `:` and `<br/>` are legal inside quoted labels and in `Note`/message text,
+so it does not flag them.
+
+Known parser hazards to avoid:
+
+| Hazard | Breaks because | Fix |
+| --- | --- | --- |
+| `A->>B: BEGIN; UPDATE` | `;` is a statement separator | Replace with a comma or `then` |
+| `A[text (note)]` | bare `(` opens a shape token | Quote the label: `A["text (note)"]` |
+| Label ending in `end` | parsed as a block terminator | Quote it or reword |
+| Odd number of `"` | unterminated label breaks the whole diagram | Balance the quotes |
+
+Note that `[( ... )]` is the valid cylinder/database shape and is not a label.
 
 ## Verification before reporting completion
 

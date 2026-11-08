@@ -6224,3 +6224,465 @@ kbd {
 @media (max-width: 900px) {
   .domain-hero { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ============================================================================
+ * Page shell — three-column navigation frame
+ *
+ * The site holds many content types across many subjects. The header carries
+ * the type axis (article, guide, tool, video); this shell adds a persistent
+ * subject rail on the left and a context/ad rail on the right.
+ *
+ * Both rails are optional, so pages opt in as they are migrated and nothing
+ * breaks in between.
+ *
+ * Column widths are content-driven: the rail is sized to its longest label,
+ * the main column is capped at a readable measure, the aside takes the rest.
+ * ========================================================================== */
+
+:root {
+  /* UI sans for dense navigation labels, distinct from the editorial serif. */
+  --font-ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --rail-width: 244px;
+  --aside-width: 280px;
+  --shell-gap: 2.25rem;
+  --shell-max: 1440px;
+}
+
+.page-shell {
+  width: min(calc(100% - 2.5rem), var(--max));
+  margin-inline: auto;
+  padding-block: 2rem 4rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--shell-gap);
+  align-items: start;
+}
+
+/* Rail + main — centre the pair so the layout does not read as left-weighted
+   when there is no aside to balance it. */
+.page-shell--rail:not(.page-shell--right) {
+  width: min(calc(100% - 2.5rem), var(--shell-max));
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  justify-content: center;
+}
+
+/* Rail + main + aside */
+.page-shell--rail.page-shell--right {
+  grid-template-columns: var(--rail-width) minmax(0, 1fr) var(--aside-width);
+}
+
+/* Aside without a left rail */
+.page-shell--right:not(.page-shell--rail) {
+  width: min(calc(100% - 2.5rem), var(--shell-max));
+  grid-template-columns: minmax(0, 1fr) var(--aside-width);
+}
+
+.page-shell-main {
+  min-width: 0;
+}
+
+/* Prose keeps a readable measure; grids and tool panels use the full column.
+   Capping the column itself would squeeze card grids and waste the space. */
+.page-shell-main > .prose,
+.page-shell-main .article-body {
+  max-width: 72ch;
+}
+
+/* The rail and aside stay in view while the main column scrolls — that is the
+   whole point of a persistent subject index on a very large site. */
+.page-shell-rail,
+.page-shell-aside {
+  position: sticky;
+  top: 1.5rem;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.page-shell-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Wide main column for tool/grid pages that need more than a reading measure. */
+.page-shell--wide .page-shell-main {
+  max-width: none;
+}
+/* ---------------------------------------------------------------- subject rail */
+
+.subject-rail {
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--text-soft);
+  padding-right: 0.5rem;
+  border-right: 1px solid var(--border);
+  padding-block: 0.25rem;
+}
+
+.rail-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  margin-bottom: 1.125rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  text-decoration: none;
+  background: var(--bg-elevated);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.rail-search:hover,
+.rail-search:focus-visible {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.rail-shelf + .rail-shelf {
+  margin-top: 1.375rem;
+  padding-top: 1.125rem;
+  border-top: 1px solid var(--border);
+}
+
+.rail-shelf-title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+  padding-inline: 0.625rem;
+}
+
+.rail-domains,
+.rail-categories {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rail-domain-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-soft);
+  text-decoration: none;
+  transition: background-color 0.12s, color 0.12s;
+}
+
+.rail-domain-link:hover,
+.rail-domain-link:focus-visible {
+  background: var(--bg-sunken);
+  color: var(--text);
+}
+
+.rail-count {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.6875rem;
+  color: var(--muted);
+  flex: none;
+}
+
+/* The active subject opens in place, so the rail doubles as a local index. */
+.rail-domain.is-active > .rail-domain-link {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.rail-domain.is-active .rail-count {
+  color: var(--accent);
+}
+
+.rail-categories {
+  margin: 0.1875rem 0 0.5rem;
+  padding-left: 0.625rem;
+  border-left: 1px solid var(--border-strong);
+  margin-left: 0.875rem;
+}
+
+.rail-categories a {
+  display: block;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.78125rem;
+}
+
+.rail-categories a:hover,
+.rail-categories a:focus-visible {
+  background: var(--bg-sunken);
+  color: var(--text);
+}
+
+.rail-foot {
+  margin-top: 1.5rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.rail-foot a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.75rem;
+  padding-inline: 0.625rem;
+}
+
+.rail-foot a:hover,
+.rail-foot a:focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------- right rail */
+
+.rail-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.125rem;
+  background: var(--bg-elevated);
+  font-family: var(--font-ui);
+  font-size: 0.8125rem;
+}
+
+.rail-card-title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.625rem;
+}
+
+/* Ad space in the aside. Always labelled, never inside the reading column. */
+.page-shell-aside .ad-slot {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------- responsive
+ *
+ * Collapse order matters: the aside is a convenience, the rail is navigation.
+ * Losing the aside first preserves wayfinding for as long as possible.
+ */
+@media (max-width: 1240px) {
+  .page-shell--rail.page-shell--right {
+    grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  }
+
+  .page-shell--rail.page-shell--right .page-shell-aside {
+    display: none;
+  }
+}
+
+@media (max-width: 980px) {
+  /* Both rails fold away; the header mega-menu carries subjects at this width. */
+  .page-shell,
+  .page-shell--rail,
+  .page-shell--right:not(.page-shell--rail) {
+    width: min(calc(100% - 2rem), var(--max));
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: 1.5rem 3rem;
+  }
+
+  .page-shell-rail,
+  .page-shell-aside {
+    display: none;
+  }
+}
+
+@media print {
+  .page-shell-rail,
+  .page-shell-aside {
+    display: none;
+  }
+}
+
+/* Breadcrumbs sit above the shell, so they must share its width or the page
+   reads as two misaligned systems. */
+.breadcrumbs-bar {
+  width: min(calc(100% - 2.5rem), var(--shell-max));
+}
+
+@media (max-width: 980px) {
+  .breadcrumbs-bar {
+    width: min(calc(100% - 2rem), var(--max));
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * Horizontal alignment
+ *
+ * The header, breadcrumbs and page shell must share one width, or the page
+ * reads as several misaligned systems with different left edges. They all key
+ * off --shell-max so a single token controls the whole frame.
+ * -------------------------------------------------------------------------- */
+.header-inner {
+  width: min(calc(100% - 2.5rem), var(--shell-max));
+}
+
+@media (max-width: 980px) {
+  .header-inner {
+    width: min(calc(100% - 2rem), var(--max));
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * Diagram legibility
+ *
+ * Mermaid sizes its SVG in user units, and a wide graph scaled down to fit the
+ * column renders text below a readable size. Enforcing a minimum keeps labels
+ * legible; the wrapper already scrolls horizontally when the graph is wider
+ * than the column, so shrinking is never necessary.
+ * -------------------------------------------------------------------------- */
+.mermaid-diagram svg {
+  /* Never scale below the point where labels stay readable. */
+  min-width: min(100%, 520px);
+  font-size: 14px;
+}
+
+.mermaid-diagram svg text,
+.mermaid-diagram svg .label {
+  font-size: 14px !important;
+  fill: var(--text) !important;
+}
+
+.mermaid-diagram svg .node rect,
+.mermaid-diagram svg .cluster rect {
+  stroke: var(--border-strong) !important;
+}
+
+/* Give wide graphs room to breathe rather than cramping them into the column. */
+.diagram-figure {
+  margin-block: 1.75rem;
+}
+
+.diagram-figure .diagram-caption {
+  margin-top: 0.625rem;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+/* ============================================================================
+ * Full-bleed frame
+ *
+ * Remove the outer left/right gutters so the frame reaches both viewport
+ * edges. Inner breathing room is preserved as padding on the content itself,
+ * so text never touches the edge while the layout no longer wastes space.
+ *
+ * `--page-gutter` is the single knob: set it to 0 for true edge-to-edge, or
+ * restore a value to bring back outer margins.
+ * ========================================================================== */
+:root {
+  /* Outer margins are gone; this is the minimum inner breathing room so text
+     never touches the window edge. Set to 0 for literal edge-to-edge. */
+  --page-gutter: 0.5rem;
+}
+
+.container,
+.header-inner,
+.breadcrumbs-bar,
+.page-shell,
+.page-shell--rail,
+.page-shell--rail:not(.page-shell--right),
+.page-shell--right:not(.page-shell--rail),
+.page-shell--rail.page-shell--right {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: var(--page-gutter);
+}
+
+/* The sidebar rail needs a small inner gutter so its labels do not collide
+   with the window edge once the outer margin is gone. */
+.page-shell--rail > .page-shell-rail {
+  padding-left: 1rem;
+}
+
+/* Keep a readable measure inside a full-width frame. */
+.page-shell-main > .prose,
+.page-shell-main .article-body {
+  max-width: 72ch;
+}
+
+@media (max-width: 980px) {
+  .container,
+  .header-inner,
+  .breadcrumbs-bar,
+  .page-shell,
+  .page-shell--rail,
+  .page-shell--right:not(.page-shell--rail) {
+    width: 100%;
+    max-width: none;
+    padding-inline: var(--page-gutter);
+  }
+}
+
+/* ============================================================================
+ * Centered article header
+ *
+ * The header block (breadcrumb, domain/category, date, read time, series kicker,
+ * title, summary, byline, tags) was left-aligned with per-element max-widths,
+ * which left a ragged right edge and an empty right half on wide screens.
+ * Centering the block as one unit, with a shareable measure, reads better and
+ * stops the header from looking lopsided next to a full-bleed body.
+ * ========================================================================== */
+.article-header .article-header-inner {
+  max-width: 900px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* Centring the container is not enough: each child carried its own left-biased
+   cap, so they must be centred and un-capped individually. */
+.article-header .article-topline,
+.article-header .article-byline,
+.article-header .article-tags {
+  justify-content: center;
+}
+
+.article-header .article-header h1,
+.article-header h1 {
+  max-width: 34ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+.article-header .article-summary {
+  max-width: 72ch;
+  margin-inline: auto;
+  text-wrap: pretty;
+}
+
+.article-header .article-series-kicker {
+  text-align: center;
+}
+
+.article-header .chips {
+  justify-content: center;
+}
+
+/* On article pages the whole header is centred, so the breadcrumb above it must
+   be centred too or it reads as a stray element pinned to the far left. */
+.article-page .breadcrumbs-bar {
+  text-align: center;
+}
+
+.article-page .breadcrumbs ol {
+  justify-content: center;
+}
+
+/* Trim the dead gap between the breadcrumb and the centred block. */
+.article-page .article-header {
+  padding-top: 0.5rem;
+}

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import LibrarySidebar from '../../components/LibrarySidebar.astro';
+import PageShell from '../../components/PageShell.astro';
 import GuideCard from '../../components/GuideCard.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import ToolCard from '../../components/ToolCard.astro';
@@ -39,8 +39,7 @@ const jsonLd = [
   breadcrumbs={breadcrumbs}
   jsonLd={jsonLd}
 >
-  <div class="container library-layout library-layout--two-col">
-    <LibrarySidebar currentDomain={domain.slug} />
+  <PageShell rail activeSubject={domain.slug}>
     <main class="library-main">
       <header class="domain-hero">
         <div class="domain-hero-copy">
@@ -102,5 +101,5 @@ const jsonLd = [
         </section>
       )}
     </main>
-  </div>
+  </PageShell>
 </BaseLayout>

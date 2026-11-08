@@ -1,0 +1,77 @@
+---
+/**
+ * SubjectRail — the persistent subject index.
+ *
+ * This is the middle layer of the site's navigation, and the one deep enough
+ * to hold a very large library: the header carries *types* (article, guide,
+ * tool, video), this rail carries *subjects* (money, technology, life, world)
+ * with the categories underneath each.
+ *
+ * It reads the real taxonomy, so counts and titles can never drift from the
+ * content that exists. Nothing here is hand-maintained.
+ */
+import { getCategoriesForDomain, getDomainPath, getCategoryPath, liveDomains, SHELF_BY_ID } from '../data/taxonomy';
+
+interface Props {
+  activeSubject?: string;
+  showSearch?: boolean;
+}
+
+const { activeSubject, showSearch = true } = Astro.props;
+
+const domains = liveDomains();
+
+// Group domains by their shelf, preserving taxonomy order.
+const shelves = [...SHELF_BY_ID.values()]
+  .sort((a, b) => a.order - b.order)
+  .map((shelf) => ({
+    ...shelf,
+    domains: domains.filter((domain) => domain.shelf === shelf.id),
+  }))
+  .filter((shelf) => shelf.domains.length > 0);
+---
+
+<nav class="subject-rail" aria-label="Browse by subject">
+  {showSearch && (
+    <a class="rail-search" href="/search/">
+      <span aria-hidden="true">⌕</span>
+      <span>Search the library</span>
+    </a>
+  )}
+
+  {shelves.map((shelf) => (
+    <section class="rail-shelf" aria-labelledby={`rail-${shelf.id}`}>
+      <h2 class="rail-shelf-title" id={`rail-${shelf.id}`}>{shelf.title}</h2>
+      <ul class="rail-domains">
+        {shelf.domains.map((domain) => {
+          const categories = getCategoriesForDomain(domain.slug);
+          const isActive = activeSubject === domain.slug;
+          return (
+            <li class:list={['rail-domain', isActive && 'is-active']}>
+              <a class="rail-domain-link" href={getDomainPath(domain.slug)}>
+                {domain.title}
+                {categories.length > 0 && (
+                  <span class="rail-count" aria-hidden="true">{categories.length}</span>
+                )}
+              </a>
+              {isActive && categories.length > 0 && (
+                <ul class="rail-categories">
+                  {categories.map((category) => (
+                    <li>
+                      <a href={getCategoryPath(category.slug) ?? '#'}>{category.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  ))}
+
+  <div class="rail-foot">
+    <a href="/library/">All subjects and categories</a>
+    <a href="/articles/">Every article</a>
+  </div>
+</nav>

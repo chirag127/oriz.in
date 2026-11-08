@@ -883,11 +883,32 @@ export const SERIES: TaxonomySeries[] = [
     order: 1,
   },
   {
+    slug: 'indexing-and-access-paths',
+    category: 'data-storage',
+    title: 'Indexing & Access Paths',
+    description: 'How the storage engine and query planner actually choose between a scan and an index, and what it costs.',
+    order: 2,
+  },
+  {
+    slug: 'transactions-and-consistency',
+    category: 'data-storage',
+    title: 'Transactions & Consistency',
+    description: 'Isolation levels, MVCC, locking, and what a database really guarantees under concurrency.',
+    order: 3,
+  },
+  {
     slug: 'ip-addressing',
     category: 'networking',
     title: 'IP Addressing',
     description: 'Prefixes, usable ranges, subnets, and the addressing details behind confusing network failures.',
     order: 1,
+  },
+  {
+    slug: 'core-protocols',
+    category: 'networking',
+    title: 'Core Protocols',
+    description: 'DNS, TLS, and the request path: what actually happens between a name and a response.',
+    order: 2,
   },
   {
     slug: 'git-and-history',
@@ -916,6 +937,13 @@ export const SERIES: TaxonomySeries[] = [
     title: 'Algorithms',
     description: 'Comparison, diff algorithms, and the cost of the shortcuts underneath everyday tools.',
     order: 1,
+  },
+  {
+    slug: 'distributed-systems',
+    category: 'computer-science',
+    title: 'Distributed Systems',
+    description: 'Consensus, replication, partitioning, and the failure models that make distribution hard.',
+    order: 2,
   },
   {
     slug: 'production-ai',
