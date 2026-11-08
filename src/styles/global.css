@@ -6686,3 +6686,115 @@ kbd {
 .article-page .article-header {
   padding-top: 0.5rem;
 }
+
+/* ============================================================================
+ * Full-width reading column
+ *
+ * The frame is full-bleed, so capping prose at 72–73ch left a large dead band
+ * inside the main column. The reader asked for the text to use all the
+ * available space; these overrides remove every prose measure cap while
+ * keeping the layout's own padding.
+ * ========================================================================== */
+.article-page .prose,
+.article-page .article-body,
+.page-shell-main > .prose,
+.page-shell-main .article-body {
+  max-width: none;
+}
+
+/* Long-form body text still needs reprieve from 200-character lines: bound it
+   by the column, with generous horizontal padding rather than a hard measure. */
+.article-page .article-main {
+  padding-inline: 1.5rem;
+}
+
+/* Block quotations and callouts should not stretch the entire width either. */
+.article-page .prose blockquote,
+.article-page .prose .callout {
+  max-width: none;
+}
+
+/* ============================================================================
+ * Homepage composition
+ *
+ * Full-bleed is right for article reading, but a marketing hero stretched to
+ * 1905px strands the headline and the tools card at opposite edges with a huge
+ * empty gap between them. Homepage sections get a sensible measure and stay
+ * centred; the frame still reaches the edges, so nothing looks boxed in.
+ * ========================================================================== */
+.home-page .hero-inner,
+.home-page main > .container {
+  width: min(100%, 1360px);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* The hero two-column split is too wide at large sizes; keep the card closer. */
+.home-page .hero-inner {
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: clamp(2rem, 3.5vw, 3.5rem);
+}
+
+/* Long body copy in the hero should not run to the edge of its column. */
+.home-page .hero-copy > p {
+  max-width: 56ch;
+}
+
+/* Trim the excess space between the header and the eyebrow. */
+.home-page .hero-inner {
+  padding-block: clamp(2.25rem, 4.5vw, 4rem) clamp(2rem, 4vw, 3.5rem);
+}
+
+/* The category strip's trailing scrollbar read as unfinished; soften it. */
+.home-page .category-rail-wrap {
+  padding-bottom: 0.25rem;
+}
+
+/* ----------------------------------------------------------------------------
+ * Homepage category strip
+ *
+ * The chip rail is a deliberate horizontal scroller, but full-bleed it started
+ * at x=0 while every other section is centred at 1360px, and the trailing chip
+ * was clipped with no affordance. Align it to the content measure and fade the
+ * right edge so the cut-off chip reads as "there is more".
+ * -------------------------------------------------------------------------- */
+.home-page .category-rail-wrap {
+  position: relative;
+  background: var(--bg-sunken);
+}
+
+.home-page .category-rail-wrap > * {
+  width: min(100%, 1360px);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* Fade the trailing edge: a clipped chip then reads as intentional scroll. */
+.home-page .category-rail-wrap::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  width: 3.5rem;
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, var(--bg-sunken));
+}
+
+/* Chips get breathing room from the scrollbar. */
+.home-page .category-rail {
+  scrollbar-width: thin;
+  padding-bottom: 0.5rem;
+}
+
+/* A chip clipped mid-word ("Alternative Inves…") reads as a bug rather than an
+   affordance. Snap the rail to chip boundaries so scrolling stops cleanly, and
+   never let a chip be the only thing cut. */
+.home-page .category-rail {
+  scroll-snap-type: x proximity;
+  scroll-snap-stop: normal;
+}
+
+.home-page .category-rail > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
