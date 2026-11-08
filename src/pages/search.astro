@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { liveDomains } from '../data/taxonomy';
+import Icon from '../components/Icon.astro';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Search' },
+];
+---
+
+<BaseLayout
+  title="Search"
+  description="Search ORIZ.IN articles, tools, categories, API notes, learning paths, and glossary terms."
+  noindex
+  breadcrumbs={breadcrumbs}
+>
+  <div class="container">
+    <div class="search-page">
+      <p class="eyebrow">Search</p>
+      <h1>Find the useful thing.</h1>
+      <p class="lead">
+        Search the published library by title, description, category, tag,
+        heading, or short article excerpt. The index contains public content
+        only; queries stay in this browser.
+      </p>
+
+      <form id="search-form" class="search-form-large" action="/search/" method="get" role="search" data-clarity-mask="true">
+        <Icon name="search" size={19} class="search-icon" />
+        <label class="sr-only" for="search-input">Search ORIZ.IN</label>
+        <input
+          id="search-input"
+          name="q"
+          type="search"
+          placeholder="Try “JSON”, “loan”, “HTTP”, or “Mermaid”"
+          autocomplete="off"
+          spellcheck="false"
+          aria-describedby="search-status"
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      <div class="search-filters">
+        <label class="sr-only" for="search-domain">Filter by domain</label>
+        <select class="select" id="search-domain">
+          <option value="">All domains</option>
+          {liveDomains().map((domain) => (
+            <option value={domain.title}>{domain.title}</option>
+          ))}
+        </select>
+        <label class="sr-only" for="search-type">Filter by resource type</label>
+        <select class="select" id="search-type">
+          <option value="">All resource types</option>
+          <option value="article">Articles</option>
+          <option value="guide">Complete guides</option>
+          <option value="domain">Domains</option>
+          <option value="tool">Tools</option>
+          <option value="category">Categories</option>
+          <option value="api">APIs</option>
+          <option value="learning-path">Learning paths</option>
+          <option value="glossary">Glossary</option>
+        </select>
+        <label class="sr-only" for="search-category">Filter by category</label>
+        <select class="select" id="search-category">
+          <option value="">All categories</option>
+        </select>
+      </div>
+
+      <p class="search-status" id="search-status" aria-live="polite">
+        Type at least two characters to search.
+      </p>
+
+      <ol class="search-results" id="search-results" aria-label="Search results"></ol>
+
+      <div class="search-empty" id="search-empty" hidden>
+        <h2>No results found</h2>
+        <p id="search-empty-copy">
+          Try a shorter phrase, a different spelling, or browse the full
+          directories.
+        </p>
+        <div class="search-suggestions">
+          <button type="button" data-search-suggestion="JSON">JSON</button>
+          <button type="button" data-search-suggestion="loan">loan</button>
+          <button type="button" data-search-suggestion="HTTP">HTTP</button>
+          <button type="button" data-search-suggestion="Mermaid">Mermaid</button>
+          <button type="button" data-search-suggestion="cron">cron</button>
+        </div>
+      </div>
+
+      <p class="search-keyboard-help" id="search-keyboard" hidden>
+        Use <kbd>↑</kbd> and <kbd>↓</kbd> to move through results and
+        <kbd>Enter</kbd> to open one. <kbd>Escape</kbd> clears the field.
+      </p>
+
+      <noscript>
+        <div class="tool-info">
+          Search needs JavaScript. You can still browse the
+          {' '}
+          <a href="/tools/">tool directory</a>, the
+          {' '}
+          <a href="/articles/">article library</a>, or the
+          {' '}
+          <a href="/library/">library map</a>.
+        </div>
+      </noscript>
+
+      <p class="search-help">
+        The search index is generated at build time and downloaded as a compact
+        file of metadata, headings, and short excerpts. Queries are not sent to
+        analytics.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import '../scripts/search';
+</script>

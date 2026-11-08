@@ -1,0 +1,39 @@
+---
+import { getAdsense } from '../lib/services';
+
+interface Props {
+  placement?: 'article-end' | 'sidebar';
+}
+
+const { placement = 'article-end' } = Astro.props;
+const ads = getAdsense();
+---
+
+{
+  ads.enabled && (
+    <aside
+      class:list={['ad-slot', `ad-slot--${placement}`]}
+      aria-label="Advertisement"
+      data-ad-placement={placement}
+    >
+      <p class="ad-label">Advertisement</p>
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client={ads.client}
+        data-ad-slot={ads.slot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+      <script
+        is:inline
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ads.client}`}
+        crossorigin="anonymous"
+      />
+      <script is:inline>
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </aside>
+  )
+}

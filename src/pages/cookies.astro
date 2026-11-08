@@ -1,0 +1,103 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { PROFILE } from '../data/profile';
+---
+
+<LegalLayout
+  title="Cookies and analytics"
+  description="The current cookie status of ORIZ.IN, the local storage keys the site uses, and the optional analytics and advertising integrations."
+  lastUpdated="25 October 2026"
+>
+  <h2>Current status</h2>
+  <p>
+    ORIZ.IN’s application does not set first-party analytics or advertising
+    cookies. Optional Google Analytics 4, Microsoft Clarity, and Google AdSense
+    integrations are not loaded unless the operator configures valid identifiers
+    and explicitly enables them. At the time of this update, they are disabled.
+  </p>
+
+  <h2>What is stored in your browser</h2>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Scrollable data table">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Key</th>
+          <th scope="col">Type</th>
+          <th scope="col">Purpose</th>
+          <th scope="col">Lifetime</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>oriz-theme</code></td>
+          <td>localStorage</td>
+          <td>Remembers an explicit light or dark theme choice.</td>
+          <td>Until you clear site data.</td>
+        </tr>
+        <tr>
+          <td><code>oriz-path:&lt;slug&gt;</code></td>
+          <td>localStorage</td>
+          <td>Remembers which learning-path steps you marked complete.</td>
+          <td>Until you clear site data.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    These values are not sent to ORIZ.IN by the application. You can remove
+    them through your browser’s site-data or storage settings. Clearing them
+    resets your theme and any learning progress.
+  </p>
+
+  <h2>Hosting cookies</h2>
+  <p>
+    Cloudflare may set security or performance-related cookies as the hosting
+    provider, independent of ORIZ.IN’s application code. Cloudflare’s own
+    policies and cookie documentation describe those technologies.
+  </p>
+
+  <h2>Optional analytics</h2>
+  <p>
+    If Google Analytics 4 is enabled, page views may be measured using Google’s
+    scripts and identifiers. If Microsoft Clarity is enabled, it may record
+    session interactions such as clicks and scrolling outside the masked tool
+    areas. Tool interfaces carry a masking attribute, and no tool input values
+    are intentionally sent as analytics events. These services set their own
+    cookies or identifiers and are governed by their own policies.
+  </p>
+  <p>
+    Enabling optional analytics requires appropriate notice and, in some
+    jurisdictions, prior consent. The presence of a browser setting is not by
+    itself proof of legal compliance, and ORIZ.IN does not claim that it is.
+  </p>
+
+  <h2>Optional advertising</h2>
+  <p>
+    Google AdSense is disabled unless configured. If enabled after approval,
+    Google and its partners may use cookies or similar identifiers to serve,
+    measure, and limit ads. Those technologies are controlled by Google and are
+    subject to the user’s consent choices and regional requirements. Ads are
+    labelled and kept separate from tool controls and primary content.
+  </p>
+
+  <h2>External links</h2>
+  <p>
+    Buy Me a Coffee, GitHub, social platforms, and third-party API
+    documentation are external sites. Opening them may create cookies or
+    identifiers under their policies. ORIZ.IN does not control those settings.
+  </p>
+
+  <h2>How to control cookies</h2>
+  <ul>
+    <li>Use your browser’s privacy or site-data settings to block or clear cookies and localStorage.</li>
+    <li>Use a content blocker or privacy extension if you want additional control over third-party scripts.</li>
+    <li>If optional services are enabled later, use their consent controls or opt-out mechanisms where available.</li>
+  </ul>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about storage or tracking:
+    <a href={`mailto:${PROFILE.email}?subject=Cookies%20and%20analytics`}>{PROFILE.email}</a>.
+    See also the <a href="/privacy/">privacy policy</a>.
+  </p>
+</LegalLayout>

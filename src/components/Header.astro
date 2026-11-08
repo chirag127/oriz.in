@@ -1,0 +1,218 @@
+---
+import { NAV_LINKS, SITE } from '../consts';
+import { SHELVES, getCategoriesForDomain, getCategoryPath, liveDomains } from '../data/taxonomy';
+import Icon from './Icon.astro';
+
+const path = Astro.url.pathname;
+const domains = liveDomains();
+const shelves = SHELVES.map((shelf) => ({
+  ...shelf,
+  domains: domains
+    .filter((domain) => domain.shelf === shelf.id)
+    .map((domain) => {
+      const categories = getCategoriesForDomain(domain.slug);
+      const featured = domain.featuredCategories
+        .map((slug) => categories.find((category) => category.slug === slug))
+        .filter((category): category is NonNullable<typeof category> => Boolean(category));
+      return { domain, categories, featured: featured.length > 0 ? featured : categories.slice(0, 4) };
+    }),
+})).filter((shelf) => shelf.domains.length > 0);
+
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(href);
+const isLibraryActive =
+  path.startsWith('/library/') || domains.some((domain) => path.startsWith(`/${domain.slug}/`));
+
+const mobileLinks = [
+  { label: 'Library', href: '/library/' },
+  { label: 'All articles', href: '/articles/' },
+  ...NAV_LINKS.filter((link) => link.href !== '/articles/'),
+  { label: 'Glossary', href: '/glossary/' },
+  { label: 'Work with Chirag', href: '/author/chirag-singhal/' },
+] as const;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="ORIZ.IN home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="28" height="28" focusable="false">
+          <rect width="64" height="64" rx="14" fill="currentColor"></rect>
+          <circle cx="27" cy="32" r="13" fill="none" stroke="#fffefc" stroke-width="7"></circle>
+          <circle cx="47" cy="32" r="5" fill="#1c1917"></circle>
+        </svg>
+      </span>
+      <span class="brand-word">ORIZ<span class="brand-dot">.</span>IN</span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <ul>
+        <li class="nav-library">
+          <button
+            type="button"
+            class:list={['nav-link', 'nav-library-toggle', { 'is-active': isLibraryActive }]}
+            aria-expanded="false"
+            aria-controls="library-menu"
+            data-library-toggle
+          >
+            Library
+            <Icon name="arrow-down" size={13} />
+          </button>
+          <div class="library-mega" id="library-menu" data-library-menu hidden>
+            <div class="container library-mega-inner">
+              {shelves.map((shelf) => (
+                <section class="mega-shelf" aria-labelledby={`mega-${shelf.id}`}>
+                  <h2 id={`mega-${shelf.id}`}>{shelf.title}</h2>
+                  <ul>
+                    {shelf.domains.map(({ domain, featured }) => (
+                      <li>
+                        <a class="mega-domain" href={`/${domain.slug}/`}>{domain.title}</a>
+                        <ul class="mega-categories">
+                          {featured.map((category) => (
+                            <li><a href={getCategoryPath(category.slug)}>{category.title}</a></li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+              <div class="mega-footer">
+                <a href="/library/">All domains and categories</a>
+                <a href="/articles/">All articles</a>
+                <a href="/learn/">Learning paths</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        {
+          NAV_LINKS.map((link) => (
+            <li>
+              <a
+                class:list={['nav-link', { 'is-active': isActive(link.href) }]}
+                href={link.href}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a class="header-search-link" href="/search/" aria-label="Search ORIZ.IN">
+        <Icon name="search" size={17} />
+        <span>Search</span>
+      </a>
+      <a class="header-hire" href="/author/chirag-singhal/#hire">Hire me</a>
+      <button
+        type="button"
+        class="icon-button theme-toggle"
+        data-theme-toggle
+        aria-label="Toggle color theme"
+        aria-pressed="false"
+        title="Switch to dark theme"
+      >
+        <Icon name="moon" size={18} class="icon-moon" />
+        <Icon name="sun" size={18} class="icon-sun" />
+      </button>
+
+      <details class="mobile-menu">
+        <summary class="icon-button mobile-menu-button" aria-label="Open menu">
+          <Icon name="menu" size={21} class="icon-menu" />
+          <Icon name="close" size={21} class="icon-close" />
+        </summary>
+        <div class="mobile-panel">
+          <nav aria-label="Mobile navigation">
+            <ul>
+              {
+                mobileLinks.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      aria-current={isActive(link.href) ? 'page' : undefined}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+          <div class="mobile-domain-list">
+            <p class="mobile-panel-label">Browse domains</p>
+            <ul>
+              {domains.map((domain) => (
+                <li><a href={`/${domain.slug}/`}>{domain.title}</a></li>
+              ))}
+            </ul>
+          </div>
+          <div class="mobile-panel-footer">
+            <a class="btn btn--primary btn--small" href="/author/chirag-singhal/">
+              Work with Chirag
+            </a>
+            <a class="mobile-support" href={SITE.supportUrl} rel="noopener">
+              Buy me a coffee
+            </a>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script>
+  const libraryToggle = document.querySelector<HTMLButtonElement>('[data-library-toggle]');
+  const libraryMenu = document.querySelector<HTMLElement>('[data-library-menu]');
+
+  function closeLibrary(): void {
+    if (!libraryToggle || !libraryMenu) return;
+    libraryMenu.hidden = true;
+    libraryToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  if (libraryToggle && libraryMenu) {
+    libraryToggle.addEventListener('click', () => {
+      const expanded = libraryToggle.getAttribute('aria-expanded') === 'true';
+      libraryToggle.setAttribute('aria-expanded', String(!expanded));
+      libraryMenu.hidden = expanded;
+    });
+    libraryMenu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', closeLibrary);
+    });
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (libraryMenu.hidden || !(target instanceof Node)) return;
+      if (!libraryToggle.contains(target) && !libraryMenu.contains(target)) closeLibrary();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !libraryMenu.hidden) {
+        closeLibrary();
+        libraryToggle.focus();
+      }
+    });
+  }
+
+  const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
+  if (menu) {
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector<HTMLElement>('summary')?.focus();
+      }
+    });
+    menu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        menu.open = false;
+      });
+    });
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (menu.open && target instanceof Node && !menu.contains(target)) {
+        menu.open = false;
+      }
+    });
+  }
+</script>

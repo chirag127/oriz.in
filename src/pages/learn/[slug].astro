@@ -1,0 +1,173 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { LEARNING_PATHS, getLearningPath } from '../../data/learning-paths';
+import {
+  getLearningPathSteps,
+  loadContentIndex,
+} from '../../lib/content';
+import { learningPathSchema } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return LEARNING_PATHS.map((path) => ({
+    params: { slug: path.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+if (!slug) throw new Error('Missing learning path slug.');
+const path = getLearningPath(slug);
+if (!path) throw new Error(`Learning path “${slug}” was not found.`);
+const { articlesById } = await loadContentIndex();
+const steps = getLearningPathSteps(path, articlesById);
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Learn', href: '/learn/' },
+  { label: path.title },
+];
+
+const jsonLd = [
+  learningPathSchema(path.title, path.description, `/learn/${path.slug}/`, steps),
+];
+---
+
+<BaseLayout
+  title={path.title}
+  description={path.description}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+  bodyClass="learning-path-page"
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="Learning path"
+      title={path.title}
+      description={path.description}
+      meta={[
+        path.level,
+        path.time,
+        `${steps.length} resources`,
+        `For ${path.audience.toLocaleLowerCase()}`,
+      ]}
+    />
+  </div>
+
+  <div class="container path-detail" data-learning-path={path.slug}>
+    <div>
+      <p class="lead">
+        Work through these resources in order. Marking a step complete is only
+        a convenience; every linked page remains freely available.
+      </p>
+
+      <ol class="path-steps">
+        {steps.map((step, index) => {
+          const stepId = `${step.kind}:${step.href}`;
+          return (
+            <li class="path-step">
+              <div class="step-check">
+                <input
+                  type="checkbox"
+                  id={`step-${index}`}
+                  value={stepId}
+                  data-step-id
+                  aria-label={`Mark step ${index + 1}, ${step.title}, complete`}
+                />
+              </div>
+              <div class="path-step-body">
+                <div class="chips">
+                  <span class="badge badge--quiet">{step.kind}</span>
+                  <span class="badge badge--quiet">Step {index + 1}</span>
+                </div>
+                <h2>
+                  <a href={step.href}>{step.title}</a>
+                </h2>
+                {step.description && <p>{step.description}</p>}
+                {step.note && <p class="step-note">{step.note}</p>}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+
+      <p class="path-source-note">
+        Last reviewed {path.updated}. Learning-path membership and ordering are
+        validated at build time against published resources.
+      </p>
+    </div>
+
+    <aside class="path-progress-card">
+      <h2>Your progress</h2>
+      <div class="progress-meta">
+        <span data-progress-label>0 of {steps.length} complete</span>
+        <span data-progress-percent>0%</span>
+      </div>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax={steps.length} aria-valuenow="0" data-progress-track>
+        <div class="progress-bar" data-progress-bar></div>
+      </div>
+      <p class="path-source-note" aria-live="polite" data-progress-status></p>
+      <p class="path-source-note">
+        Progress is stored in this browser only. Clearing site data removes it.
+      </p>
+    </aside>
+  </div>
+</BaseLayout>
+
+<script>
+  const pathRoot = document.querySelector<HTMLElement>('[data-learning-path]');
+  if (pathRoot) {
+    const key = `oriz-path:${pathRoot.dataset.learningPath ?? ''}`;
+    const checkboxes = Array.from(
+      pathRoot.querySelectorAll<HTMLInputElement>('[data-step-id]'),
+    );
+    const bar = pathRoot.querySelector<HTMLElement>('[data-progress-bar]');
+    const label = pathRoot.querySelector<HTMLElement>('[data-progress-label]');
+    const percent = pathRoot.querySelector<HTMLElement>('[data-progress-percent]');
+    const track = pathRoot.querySelector<HTMLElement>('[data-progress-track]');
+    const status = pathRoot.querySelector<HTMLElement>('[data-progress-status]');
+
+    const read = (): Set<string> => {
+      try {
+        const stored = JSON.parse(window.localStorage.getItem(key) ?? '[]');
+        return new Set(Array.isArray(stored) ? stored.filter((entry) => typeof entry === 'string') : []);
+      } catch {
+        return new Set();
+      }
+    };
+
+    const completed = read();
+    for (const checkbox of checkboxes) {
+      checkbox.checked = completed.has(checkbox.value);
+    }
+
+    const update = (save: boolean) => {
+      const checked = checkboxes.filter((checkbox) => checkbox.checked);
+      const count = checked.length;
+      const ratio = checkboxes.length > 0 ? (count / checkboxes.length) * 100 : 0;
+      if (bar) bar.style.width = `${ratio}%`;
+      if (label) label.textContent = `${count} of ${checkboxes.length} complete`;
+      if (percent) percent.textContent = `${Math.round(ratio)}%`;
+      if (track) track.setAttribute('aria-valuenow', String(count));
+      if (status) {
+        status.textContent = count === checkboxes.length && count > 0
+          ? 'Path complete. Nice work.'
+          : '';
+      }
+      if (save) {
+        try {
+          window.localStorage.setItem(
+            key,
+            JSON.stringify(checkboxes.filter((box) => box.checked).map((box) => box.value)),
+          );
+        } catch {
+          /* The page remains usable when storage is unavailable. */
+        }
+      }
+    };
+
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', () => update(true));
+    });
+    update(false);
+  }
+</script>

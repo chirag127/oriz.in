@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<BaseLayout
+  title="Page not found"
+  description="The requested ORIZ.IN page does not exist. Browse tools, articles, or search the library."
+  noindex
+>
+  <div class="container not-found">
+    <p class="not-found-code">404 · NOT FOUND</p>
+    <h1>That page left the library.</h1>
+    <p>
+      A broken link, a renamed URL, or a typo. The useful parts are still here:
+      try the tool directory, browse an article, or search by task.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn--primary" href="/tools/">
+        Browse tools
+        <Icon name="arrow-right" size={16} />
+      </a>
+      <a class="btn btn--secondary" href="/articles/">Read articles</a>
+      <a class="btn btn--ghost" href="/search/">Search</a>
+    </div>
+    <p class="small muted" style="margin-top: 1.5rem">
+      If you followed a link from another page on ORIZ.IN, please
+      <a href="mailto:chirag@oriz.in?subject=Broken%20ORIZ.IN%20link">report it</a>.
+    </p>
+  </div>
+</BaseLayout>

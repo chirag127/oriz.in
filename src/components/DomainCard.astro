@@ -1,0 +1,23 @@
+---
+import type { TaxonomyDomain } from '../data/taxonomy';
+import Icon from './Icon.astro';
+
+interface Props {
+  domain: TaxonomyDomain;
+  categoryCount: number;
+  articleCount: number;
+}
+
+const { domain, categoryCount, articleCount } = Astro.props;
+---
+
+<a class="domain-card card card--link" href={`/${domain.slug}/`}>
+  <span class="card-icon" aria-hidden="true"><Icon name={domain.icon} size={22} /></span>
+  <p class="card-kicker">Library domain</p>
+  <h3 class="card-title">{domain.title}</h3>
+  <p class="card-description">{domain.description}</p>
+  <div class="card-foot">
+    <span>{categoryCount} {categoryCount === 1 ? 'guide' : 'guides'} · {articleCount} articles</span>
+    <span class="card-arrow" aria-hidden="true"><Icon name="arrow-up-right" size={16} /></span>
+  </div>
+</a>

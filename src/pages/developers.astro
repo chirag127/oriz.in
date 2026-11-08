@@ -1,0 +1,317 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Icon from '../components/Icon.astro';
+import { SITE } from '../consts';
+import { OPEN_API_FAMILY } from '../data/projects';
+import { webPageSchema } from '../lib/seo';
+
+const endpoints = [
+  {
+    path: '/data/articles.json',
+    label: 'Article metadata',
+    description: 'Published article titles, dates, domain/category/series, tags, URLs, legal ratings, sources, and reading time. No article bodies.',
+  },
+  {
+    path: '/data/tools.json',
+    label: 'Tool registry',
+    description: 'Every tool, its category, options, status, usage steps, and documented limitations.',
+  },
+  {
+    path: '/data/categories.json',
+    label: 'Categories',
+    description: 'All 36 live category guides with domain, series, counts, and canonical URLs.',
+  },
+  {
+    path: '/data/taxonomy.json',
+    label: 'Taxonomy',
+    description: 'Shelves, 15 domains, live categories, and series that define the library hierarchy.',
+  },
+  {
+    path: '/data/guides.json',
+    label: 'Complete guides',
+    description: 'Category-guide metadata, key questions, start-here picks, FAQs, tools, and canonical URLs.',
+  },
+  {
+    path: '/data/apis.json',
+    label: 'API catalog',
+    description: 'The public API notes, including verification dates, CORS status, and examples.',
+  },
+  {
+    path: '/data/learning-paths.json',
+    label: 'Learning paths',
+    description: 'Ordered resources and audience notes for each path.',
+  },
+  {
+    path: '/data/glossary.json',
+    label: 'Glossary',
+    description: 'Terms, definitions, categories, and related links.',
+  },
+  {
+    path: '/search-index.json',
+    label: 'Search index',
+    description: 'Compact metadata and headings used by the site search. Never contains personal data.',
+  },
+];
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Developers' },
+];
+
+const jsonLd = [
+  webPageSchema(
+    'Developer resources',
+    'Static JSON endpoints, API notes, reference tools, feeds, and source-code links from ORIZ.IN.',
+    '/developers/',
+  ),
+  {
+    '@type': 'DataCatalog',
+    name: 'ORIZ.IN Static Data',
+    description: 'Versioned JSON files generated from the ORIZ.IN registries at build time.',
+    url: `${SITE.url}/developers/`,
+    dataset: endpoints.map((endpoint) => ({
+      '@type': 'Dataset',
+      name: endpoint.label,
+      description: endpoint.description,
+      url: new URL(endpoint.path, SITE.url).href,
+      license: 'https://creativecommons.org/licenses/by/4.0/',
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Developer resources"
+  description="Static JSON endpoints, a verified API directory, command references, feeds, and the architecture notes behind ORIZ.IN — all free and backend-free."
+  keywords={['static JSON API', 'developer resources', 'API docs', 'Astro', 'Cloudflare Pages']}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="Developers"
+      title="Small interfaces with the sharp edges labelled."
+      description="ORIZ.IN is a static site, not a platform with an API product. What it does publish is deliberate: versioned JSON files generated at build time, verified API notes, and references that do not require an account."
+      meta={[
+        `${endpoints.length} static endpoints`,
+        'No authentication',
+        'Generated from registries',
+      ]}
+    >
+      <Fragment slot="aside">
+        <div class="side-card">
+          <h2>Source of truth</h2>
+          <p>
+            Content, registries, and endpoints live in the
+            {' '}
+            <a href={SITE.repoUrl} rel="noopener noreferrer">public repository</a>.
+            The repository is the canonical source.
+          </p>
+        </div>
+      </Fragment>
+    </PageIntro>
+
+    <div class="page-body">
+      <section class="api-section" id="static-data">
+        <h2>Static data endpoints</h2>
+        <p>
+          These files are generated during the build from the same validated
+          registries used to render the site. There is no write API, no query
+          language, no authentication, and no user data.
+        </p>
+        <div class="reference-table-wrap" tabindex="0" role="region" aria-label="Scrollable data table" style="margin-top: 1rem">
+          <table class="reference-table">
+            <thead>
+              <tr>
+                <th scope="col">Endpoint</th>
+                <th scope="col">Contents</th>
+              </tr>
+            </thead>
+            <tbody>
+              {endpoints.map((endpoint) => (
+                <tr>
+                  <td>
+                    <a href={endpoint.path}>
+                      <code>{endpoint.path}</code>
+                    </a>
+                  </td>
+                  <td>
+                    <span class="ref-primary">{endpoint.label}</span>
+                    <span class="ref-muted">{endpoint.description}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Request example</h3>
+        <div class="code-block">
+          <div class="code-block-head">
+            <span>cURL</span>
+            <span>GET</span>
+          </div>
+          <pre><code>{`curl ${SITE.url}/data/tools.json`}</code></pre>
+        </div>
+
+        <h3>Response shape</h3>
+        <div class="code-block">
+          <div class="code-block-head">
+            <span>application/json</span>
+            <span>version 1.0</span>
+          </div>
+          <pre><code>{`{
+  "version": "1.0",
+  "generated": "2026-10-25T00:00:00.000Z",
+  "count": 50,
+  "tools": [
+    {
+      "slug": "json-formatter",
+      "title": "JSON Formatter & Validator",
+      "category": "data-formats",
+      "status": "stable",
+      "url": "${SITE.url}/tools/json-formatter/"
+    }
+  ]
+}`}</code></pre>
+        </div>
+
+        <ul>
+          <li>
+            <strong>CORS:</strong> the static host is configured to allow
+            cross-origin reads of <code>/data/*</code> and
+            <code>/search-index.json</code>.
+          </li>
+          <li>
+            <strong>Caching:</strong> endpoints are static and cacheable. Do
+            not poll on every page view.
+          </li>
+          <li>
+            <strong>Stability:</strong> schema version 1.0 is a documented
+            starting point, not an uptime or compatibility guarantee. No paid
+            SLA is offered.
+          </li>
+          <li>
+            <strong>License:</strong> metadata is CC BY 4.0. Attribute
+            ORIZ.IN and link to the source page when redistributing.
+          </li>
+          <li>
+            <strong>No article bodies:</strong> the article endpoint contains
+            metadata only, not full text.
+          </li>
+        </ul>
+      </section>
+
+      <section class="api-section">
+        <h2>Reference desk</h2>
+        <p>
+          Searchable references for the conventions that show up in reviews,
+          logs, and incident channels.
+        </p>
+        <div class="article-tools-list">
+          <a href="/tools/http-status-reference/">
+            HTTP status codes
+            <span>Classes, meaning, and practical usage notes</span>
+          </a>
+          <a href="/tools/mime-reference/">
+            MIME types
+            <span>Media types, extensions, and serving cautions</span>
+          </a>
+          <a href="/tools/git-reference/">
+            Git commands
+            <span>Everyday commands, examples, and destructive-operation warnings</span>
+          </a>
+          <a href="/tools/docker-reference/">
+            Docker commands
+            <span>Images, containers, volumes, networks, and Compose</span>
+          </a>
+          <a href="/tools/regex-reference/">
+            Regular expressions
+            <span>JavaScript tokens, groups, assertions, and flags</span>
+          </a>
+          <a href="/apis/">
+            API directory
+            <span>Verified public endpoints and browser CORS notes</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="api-section">
+        <h2>Open source and first-party projects</h2>
+        <p>
+          The ORIZ.IN source is public. I also maintain experiments and small
+          APIs around web tools, AI agents, and financial data.
+        </p>
+        <div class="api-family">
+          <div>
+            <h3 style="font-size: 1.08rem">{OPEN_API_FAMILY.title}</h3>
+            <p>{OPEN_API_FAMILY.description}</p>
+            <p>{OPEN_API_FAMILY.honestNote}</p>
+            <div class="tool-actions">
+              <a class="btn btn--secondary btn--small" href={OPEN_API_FAMILY.githubUrl} rel="noopener noreferrer">
+                Browse the API repositories
+                <Icon name="arrow-up-right" size={14} />
+              </a>
+              <a class="btn btn--ghost btn--small" href="/technology/web-development/static-json-apis-on-github-pages/">
+                Read the architecture guide
+              </a>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size: 1.08rem">Small live examples</h3>
+            <ul class="api-family-list">
+              {OPEN_API_FAMILY.liveExamples.map((example) => (
+                <li>
+                  <a href={example.url} rel="noopener noreferrer">{example.name}</a>
+                  <span>{example.status} · {example.note}</span>
+                </li>
+              ))}
+              <li>
+                <a href={SITE.repoUrl} rel="noopener noreferrer">ORIZ.IN source</a>
+                <span>Astro, TypeScript, content in Markdown, static output</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="api-section">
+        <h2>Feeds and discovery</h2>
+        <ul>
+          <li><a href="/rss.xml">RSS feed</a> — the latest published articles.</li>
+          <li><a href="/sitemap-index.xml">XML sitemap index</a> — canonical, indexable pages only.</li>
+          <li><a href="/robots.txt">robots.txt</a> — crawl guidance and sitemap discovery.</li>
+          <li><a href="/site.webmanifest">Web app manifest</a> — name, icons, and theme metadata.</li>
+        </ul>
+      </section>
+
+      <section class="api-section">
+        <h2>Architecture notes</h2>
+        <p>
+          The site is pre-rendered with Astro and deployed as static files to
+          Cloudflare Pages. Tools are isolated React islands that load only on
+          their own pages. Search uses a compact build-time index. There is no
+          database, no authentication service, and no server runtime.
+        </p>
+        <p>
+          Markdown articles are stored in Git with a validated frontmatter
+          schema. Categories, tools, APIs, learning paths, and glossary terms
+          are registries validated during the build. Broken internal links,
+          missing metadata, duplicate slugs, and draft leakage are checked
+          before deployment.
+        </p>
+        <p>
+          Read more about the static-data pattern in
+          {' '}
+          <a href="/technology/web-development/static-json-apis-on-github-pages/">A Zero-Cost Pattern for Static JSON APIs on GitHub Pages</a>.
+        </p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initCodeCopy } from '../scripts/copy-code';
+  initCodeCopy();
+</script>

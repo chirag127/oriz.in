@@ -1,0 +1,28 @@
+---
+import { LEGACY_CATEGORY_REDIRECTS } from '../../data/legacy-redirects';
+
+export function getStaticPaths() {
+  return Object.entries(LEGACY_CATEGORY_REDIRECTS).map(([slug, target]) => ({
+    params: { slug },
+    props: { target },
+  }));
+}
+
+const { target } = Astro.props;
+const canonical = new URL(target, 'https://oriz.in').toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="This category has moved to the ORIZ.IN library." />
+    <title>Redirecting to the library</title>
+  </head>
+  <body>
+    <p>This category has moved. <a href={target}>Continue to the library</a>.</p>
+  </body>
+</html>

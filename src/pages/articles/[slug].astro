@@ -1,0 +1,34 @@
+---
+import { LEGACY_ARTICLE_REDIRECTS } from '../../data/legacy-redirects';
+import { articleUrl, loadContentIndex } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const { articlesById } = await loadContentIndex();
+  return Object.entries(LEGACY_ARTICLE_REDIRECTS).map(([slug, targetSlug]) => {
+    const entry = articlesById.get(targetSlug);
+    if (!entry) throw new Error(`Legacy redirect for “${slug}” points to missing article “${targetSlug}”.`);
+    return {
+      params: { slug },
+      props: { target: articleUrl(entry) },
+    };
+  });
+}
+
+const { target } = Astro.props;
+const canonical = new URL(target, 'https://oriz.in').toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="This article has moved to the ORIZ.IN library." />
+    <title>Redirecting to the article</title>
+  </head>
+  <body>
+    <p>This article has moved. <a href={target}>Continue to the article</a>.</p>
+  </body>
+</html>

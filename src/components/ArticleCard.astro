@@ -1,0 +1,45 @@
+---
+import type { Article } from '../lib/content';
+import {
+  articleLocation,
+  articleReadingMinutes,
+  articleUrl,
+  formatDate,
+} from '../lib/content';
+import { getCategory } from '../data/taxonomy';
+import Icon from './Icon.astro';
+
+interface Props {
+  article: Article;
+  variant?: 'default' | 'feature' | 'compact';
+}
+
+const { article, variant = 'default' } = Astro.props;
+const href = articleUrl(article);
+const readingMinutes = articleReadingMinutes(article);
+const location = articleLocation(article);
+const category = getCategory(location.category)?.title ?? location.category;
+---
+
+<article class:list={['article-card', 'card--link', `article-card--${variant}`]}>
+  <div class="article-meta">
+    <span class="card-kicker">{category}</span>
+    <span class="meta-dot" aria-hidden="true"></span>
+    <time datetime={article.data.pubDate.toISOString()}>
+      {formatDate(article.data.pubDate)}
+    </time>
+  </div>
+  <h3 class="article-title">
+    <a href={href}>{article.data.title}</a>
+  </h3>
+  <p class="article-desc">{article.data.description}</p>
+  <div class="article-foot">
+    <span>{readingMinutes} min read</span>
+    {article.data.difficulty && (
+      <span class="badge badge--quiet">{article.data.difficulty}</span>
+    )}
+    <span class="card-arrow" aria-hidden="true">
+      <Icon name="arrow-up-right" size={17} />
+    </span>
+  </div>
+</article>

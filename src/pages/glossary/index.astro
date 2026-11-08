@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { GLOSSARY, GLOSSARY_CATEGORIES } from '../../data/glossary';
+import { absoluteUrl, webPageSchema } from '../../lib/seo';
+
+const groups = GLOSSARY_CATEGORIES.map((category) => ({
+  category,
+  terms: GLOSSARY.filter((term) => term.category === category).sort((a, b) =>
+    a.term.localeCompare(b.term),
+  ),
+})).filter((group) => group.terms.length > 0);
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Glossary' },
+];
+
+const jsonLd = [
+  webPageSchema(
+    'Glossary',
+    'Plain-language definitions of common terms in web development, data, finance, networking, and accessibility.',
+    '/glossary/',
+  ),
+  {
+    '@type': 'DefinedTermSet',
+    name: 'ORIZ.IN Glossary',
+    url: absoluteUrl('/glossary/'),
+    hasDefinedTerm: GLOSSARY.map((term) => ({
+      '@type': 'DefinedTerm',
+      name: term.term,
+      description: term.definition,
+      url: absoluteUrl(`/glossary/#${term.slug}`),
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Glossary"
+  description="A practical glossary of web, data, finance, networking, and accessibility terms, with links to deeper explanations and working tools."
+  keywords={['glossary', 'definitions', 'web terms', 'finance terms', 'networking terms']}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="Reference"
+      title="A shared vocabulary, kept short."
+      description="Definitions you can use in a review, a lesson, or a conversation, with links to the article or tool where the idea becomes concrete."
+      meta={[`${GLOSSARY.length} terms`, `${groups.length} categories`]}
+    />
+
+    <div class="page-body">
+      <div class="glossary-header">
+        <label class="sr-only" for="glossary-filter">Search the glossary</label>
+        <input
+          class="input"
+          id="glossary-filter"
+          type="search"
+          placeholder="Search terms or definitions…"
+          autocomplete="off"
+        />
+        <span class="listing-count" id="glossary-count" aria-live="polite">
+          {GLOSSARY.length} of {GLOSSARY.length} terms
+        </span>
+      </div>
+
+      {groups.map((group) => (
+        <section class="category-page-section" data-glossary-group>
+          <h2>{group.category}</h2>
+          <div class="glossary-grid">
+            {group.terms.map((term) => {
+              const searchText = `${term.term} ${term.definition} ${term.category}`.toLocaleLowerCase();
+              return (
+                <article
+                  class="glossary-term"
+                  id={term.slug}
+                  data-glossary-term
+                  data-glossary-search={searchText}
+                >
+                  <h2>{term.term}</h2>
+                  <p>{term.definition}</p>
+                  <div class="glossary-links">
+                    {term.links.map((link) => (
+                      <a href={link.href}>{link.label}</a>
+                    ))}
+                    {term.source && (
+                      <a href={term.source} rel="noopener noreferrer">
+                        Primary source
+                      </a>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+
+      <div class="empty-state" id="glossary-empty" hidden>
+        No terms match that search.
+      </div>
+
+      <div class="verification-note" style="margin-top: 2rem">
+        This glossary is intentionally compact. It prioritises working
+        definitions over exhaustive coverage, and every term links to a deeper
+        resource where one exists.
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initGlossaryFilter } from '../../scripts/filter-glossary';
+  initGlossaryFilter();
+</script>

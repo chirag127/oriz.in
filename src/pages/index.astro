@@ -1,0 +1,408 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import ToolCard from '../components/ToolCard.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import Icon from '../components/Icon.astro';
+import {
+  articleUrl,
+  getHomeGuides,
+  getRecentArticles,
+  loadContentIndex,
+} from '../lib/content';
+import { TOOLS, getTool } from '../data/tools';
+import { FEATURED_APIS } from '../data/apis';
+import { LEARNING_PATHS } from '../data/learning-paths';
+import { PROFILE } from '../data/profile';
+import { SITE } from '../consts';
+
+const { categories, articles } = await loadContentIndex();
+const recentArticles = await getRecentArticles(3);
+const guides = await getHomeGuides();
+
+const homeCategories = [
+  'artificial-intelligence',
+  'programming-languages',
+  'backend-infrastructure',
+  'indian-finance',
+  'personal-finance',
+  'developer-utilities',
+  'security-privacy',
+  'data-formats',
+  'accessibility',
+]
+  .map((slug) => categories.find((category) => category.slug === slug))
+  .filter((category): category is NonNullable<typeof category> => Boolean(category));
+
+const homeTools = [
+  'json-formatter',
+  'subnet-calculator',
+  'loan-emi',
+  'contrast-checker',
+  'cron-explainer',
+  'mermaid-editor',
+]
+  .map((slug) => getTool(slug))
+  .filter((tool): tool is NonNullable<typeof tool> => Boolean(tool));
+
+const calculatorTools = [
+  'percentage-calculator',
+  'compound-interest',
+  'loan-emi',
+  'unit-converter',
+]
+  .map((slug) => getTool(slug))
+  .filter((tool): tool is NonNullable<typeof tool> => Boolean(tool));
+
+const heroTools = ['json-formatter', 'loan-emi', 'subnet-calculator', 'contrast-checker']
+  .map((slug) => getTool(slug))
+  .filter((tool): tool is NonNullable<typeof tool> => Boolean(tool));
+
+const previewApis = FEATURED_APIS.slice(0, 4);
+const totalArticles = articles.filter((entry) => !entry.data.noindex).length;
+---
+
+<BaseLayout
+  title="ORIZ.IN — Knowledge, tools, and references"
+  description="Practical articles, privacy-first browser tools, calculators, and reference guides for developers, builders, and curious readers."
+  keywords={[
+    'developer tools',
+    'privacy-first tools',
+    'knowledge library',
+    'software engineering articles',
+    'free calculators',
+  ]}
+  includeSiteSchema
+>
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">An independent knowledge and tools library</p>
+        <h1>Useful knowledge. Sharp tools. <span class="accent">No noise.</span></h1>
+        <p class="hero-lede">
+          Practical writing and browser-based utilities for people who build.
+          Every tool runs locally, every assumption is stated, and nothing
+          hides behind an account wall.
+        </p>
+
+        <div class="hero-search">
+          <form action="/search/" method="get" role="search" data-clarity-mask="true">
+            <Icon name="search" size={19} class="search-icon" />
+            <label class="sr-only" for="home-search">Search ORIZ.IN</label>
+            <input
+              id="home-search"
+              name="q"
+              type="search"
+              placeholder="Search tools, guides, references…"
+              autocomplete="off"
+            />
+            <button type="submit">Search</button>
+          </form>
+        </div>
+
+        <p class="hero-quick">
+          <span>Try</span>
+          <a href="/tools/json-formatter/">JSON formatter</a>
+          <a href="/tools/loan-emi/">EMI calculator</a>
+          <a href="/tools/subnet-calculator/">Subnet calculator</a>
+        </p>
+
+        <ul class="hero-meta">
+          <li>{TOOLS.length} local tools</li>
+          <li>{totalArticles} original articles</li>
+          <li>{categories.length} populated categories</li>
+          <li>No accounts</li>
+        </ul>
+      </div>
+
+      <aside class="hero-panel" aria-label="Start here">
+        <div class="hero-panel-head">
+          <p>The working set</p>
+          <a href="/tools/">All tools</a>
+        </div>
+        <ul class="hero-panel-list">
+          {heroTools.map((tool, index) => (
+            <li>
+              <a href={`/tools/${tool.slug}/`}>
+                <span class="panel-number">0{index + 1}</span>
+                <span class="panel-title">
+                  {tool.title}
+                  <span class="panel-sub">{tool.tags.slice(0, 2).join(' · ')}</span>
+                </span>
+                <Icon name="arrow-up-right" size={17} class="panel-arrow" />
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div class="hero-panel-foot">
+          <Icon name="shield" size={16} />
+          Runs in your browser. Nothing is uploaded.
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="category-rail-wrap">
+    <div class="container">
+      <nav class="category-rail" aria-label="Browse categories">
+        <span class="category-rail-label">Browse</span>
+        {categories.map((category) => (
+          <a class="category-pill" href={category.url}>
+            {category.name}
+            <span class="category-count">{category.totalCount}</span>
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+
+  <section class="section home-section">
+    <div class="container">
+      <SectionHeader
+        eyebrow="Browse"
+        title="Find the subject, not just the keyword."
+        description="The library is organised around useful areas of work, with articles and working tools living together."
+        href="/library/"
+        linkLabel="All domains"
+      />
+      <div class="grid grid--3">
+        {homeCategories.map((category) => (
+          <CategoryCard category={category} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-section">
+    <div class="container">
+      <SectionHeader
+        eyebrow="Tools"
+        title="Utilities that keep the work in your browser."
+        description="Formatters, converters, calculators, and references. No upload, no server round trip, and no login just to use a text field."
+        href="/tools/"
+        linkLabel={`All ${TOOLS.length} tools`}
+      />
+      <div class="grid grid--3">
+        {homeTools.map((tool) => (
+          <ToolCard tool={tool} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-section section--band">
+    <div class="container">
+      <SectionHeader
+        eyebrow="Reading"
+        title="Recent field notes and explainers."
+        description="Writing that starts from a real question, works through the model, and shows its sources."
+        href="/articles/"
+        linkLabel="All articles"
+      />
+      <div class="article-grid">
+        {recentArticles.map((entry) => (
+          <ArticleCard article={entry} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-section">
+    <div class="container">
+      <SectionHeader
+        eyebrow="Learn"
+        title="A route through the useful bits."
+        description="Ordered paths combine the articles and tools that belong together. Progress stays in your browser, if you want it."
+        href="/learn/"
+        linkLabel="All learning paths"
+      />
+      <div class="learn-grid">
+        {LEARNING_PATHS.map((path) => (
+          <article class="path-card">
+            <div class="chips">
+              <span class="badge">{path.level}</span>
+              <span class="badge badge--quiet">{path.time}</span>
+            </div>
+            <h2>{path.title}</h2>
+            <p>{path.description}</p>
+            <div class="path-meta">
+              <span class="chip">{path.steps.length} steps</span>
+            </div>
+            <a class="btn btn--secondary btn--small" href={`/learn/${path.slug}/`}>
+              View path
+              <Icon name="arrow-right" size={15} />
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-section">
+    <div class="container dev-band">
+      <div class="dev-band-copy">
+        <p class="eyebrow">Developers</p>
+        <h2>Reference material that respects your time.</h2>
+        <p>
+          A tested API directory, static JSON endpoints, searchable command
+          references, and guides to the conventions that explain why an
+          interface behaves the way it does.
+        </p>
+        <ul class="learning-preview-list" style="margin-top: 1.2rem">
+          {guides.map((guide) => (
+            <li>
+              <a href={articleUrl(guide)}>
+                {guide.data.title}
+                <span class="learning-preview-meta">Recommended guide</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="/developers/">
+            Developer resources
+            <Icon name="arrow-right" size={16} />
+          </a>
+          <a class="btn btn--secondary" href="/apis/">API directory</a>
+        </div>
+      </div>
+      <div class="api-preview">
+        <div class="api-preview-head">
+          <span>API notes</span>
+          <a href="/apis/">Browse all</a>
+        </div>
+        <ul class="api-preview-list">
+          {previewApis.map((api) => (
+            <li>
+              <a href={`/apis/${api.slug}/`}>
+                <span>
+                  <span class="api-preview-name">{api.name}</span>
+                  <span class="api-preview-desc">{api.provider}</span>
+                </span>
+                <span class="api-preview-tag">{api.format}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-section section--band">
+    <div class="container">
+      <SectionHeader
+        eyebrow="Numbers"
+        title="Calculators that show the assumptions."
+        description="Useful for planning and understanding, not for promising outcomes. Every model states what it includes and what it leaves out."
+        href="/money-finance/investing/"
+        linkLabel="Investing & markets"
+      />
+      <div class="grid grid--4">
+        {calculatorTools.map((tool) => (
+          <ToolCard tool={tool} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-section">
+    <div class="container diagram-band">
+      <div class="diagram-band-copy">
+        <p class="eyebrow">Visual thinking</p>
+        <h2>Diagrams you can review like code.</h2>
+        <p>
+          Text diagrams belong in the same repository as the system they
+          explain. Edit the source, see the flow, and keep the fallback
+          accessible.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="/tools/mermaid-editor/">
+            Open the Mermaid editor
+            <Icon name="arrow-right" size={16} />
+          </a>
+          <a class="btn btn--secondary" href="/diagrams/">Diagrams hub</a>
+        </div>
+      </div>
+      <div class="mini-diagram" aria-label="Example text-to-diagram flow">
+        <div class="mini-diagram-bar">
+          <span class="mini-diagram-dot"></span><span class="mini-diagram-dot"></span><span class="mini-diagram-dot"></span>
+          <span class="mini-diagram-name">diagram.mmd</span>
+        </div>
+        <div class="flow">
+          <div class="flow-node">Text source</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">Mermaid renderer</div>
+        </div>
+        <div class="flow-down">↓</div>
+        <div class="flow-row">
+          <div class="flow-node flow-node--accent">Flowchart</div>
+          <div class="flow-node">Sequence</div>
+          <div class="flow-node">ER diagram</div>
+        </div>
+        <p class="mini-diagram-caption">
+          Source stays readable. The rendered SVG is an enhancement.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-section section--band">
+    <div class="container privacy-band">
+      <div>
+        <p class="eyebrow">Privacy by default</p>
+        <h2>The tool is the product, not your data.</h2>
+        <p>
+          No accounts, no mandatory analytics, and no reason to collect what a
+          tool can calculate locally. Advertisements are optional and disabled
+          until explicitly configured.
+        </p>
+      </div>
+      <div class="principles">
+        <div class="principle">
+          <h3>Local first</h3>
+          <p>
+            Formatting, conversion, and calculation happen in your browser.
+            Inputs are not sent to ORIZ.IN.
+          </p>
+        </div>
+        <div class="principle">
+          <h3>No account wall</h3>
+          <p>
+            Every published tool is usable immediately. There is no sign-up,
+            upgrade prompt, or hidden usage counter.
+          </p>
+        </div>
+        <div class="principle">
+          <h3>Visible limits</h3>
+          <p>
+            Each tool lists what it does not handle. A smaller honest tool beats
+            a broad fake one.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top: 2.5rem">
+      <div class="maker-band">
+        <div>
+          <h2>Built and maintained by {PROFILE.name}.</h2>
+          <p>
+            I am a software engineer and AI engineer building useful things in
+            public. ORIZ.IN is an independent project, not a content farm.
+            I am open to software engineering and AI engineering opportunities.
+          </p>
+        </div>
+        <div class="maker-actions">
+          <a class="btn btn--primary btn--small" href={SITE.authorUrl}>
+            Work with Chirag
+          </a>
+          <a class="btn btn--secondary btn--small" href={SITE.supportUrl} rel="noopener">
+            Buy me a coffee
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

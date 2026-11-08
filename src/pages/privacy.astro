@@ -1,0 +1,223 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { PROFILE } from '../data/profile';
+import { SITE } from '../consts';
+---
+
+<LegalLayout
+  title="Privacy policy"
+  description="What ORIZ.IN does and does not collect, how local tools work, which optional services exist, and how to exercise your choices."
+  lastUpdated="25 October 2026"
+>
+  <p>
+    ORIZ.IN is operated by {PROFILE.name} ({PROFILE.email}). This policy
+    explains the limited data involved in visiting the site. It applies to
+    <a href={SITE.url}>{SITE.url}</a> and its subpages, not to third-party sites
+    that we link to.
+  </p>
+
+  <h2>The short version</h2>
+  <ul>
+    <li>There are no accounts, logins, or user profiles on ORIZ.IN.</li>
+    <li>
+      Interactive tools process their input in your browser. The tool code does
+      not send your input to ORIZ.IN.
+    </li>
+    <li>
+      Theme preference and optional learning-path progress are saved in your
+      own browser using <code>localStorage</code>.
+    </li>
+    <li>
+      Analytics and advertising integrations are optional, inactive by default,
+      and only load when valid configuration is supplied by the operator.
+    </li>
+    <li>
+      The hosting provider processes ordinary request data to deliver and
+      protect the site. Email and social services process data when you choose
+      to use them.
+    </li>
+  </ul>
+
+  <h2>Data we handle</h2>
+
+  <h3>Tool inputs</h3>
+  <p>
+    Formatting, conversion, calculation, inspection, and preview features run
+    locally in JavaScript or WebAssembly. The site does not transmit the text,
+    files, numbers, or diagrams you put into a tool to a server controlled by
+    ORIZ.IN. Tool pages display whether processing is local. Do not treat a
+    browser tool as a secure vault: your device, browser extensions, and other
+    software may have their own access to local data.
+  </p>
+
+  <h3>Hosting and request data</h3>
+  <p>
+    ORIZ.IN is served through Cloudflare Pages. When you request a page,
+    Cloudflare may process technical information such as your IP address,
+    requested URL, browser headers, timestamps, and security signals in order to
+    deliver content, cache it, and protect the service from abuse. Cloudflare
+    handles that data under its own privacy terms. ORIZ.IN does not use this
+    information to build reader profiles.
+  </p>
+
+  <h3>Local preferences</h3>
+  <p>
+    The site stores a small theme preference under the key
+    <code>oriz-theme</code>. If you mark learning-path steps complete, the site
+    stores that path’s selections under a key beginning with
+    <code>oriz-path:</code>. These values stay in your browser, are not
+    transmitted by the application, and can be removed by clearing site data.
+  </p>
+
+  <h3>Search</h3>
+  <p>
+    Search queries are processed in your browser against a static JSON index.
+    The query may appear in the page URL and your browsing history. It is not
+    sent to ORIZ.IN analytics. The server sees the request for the index file,
+    not the words you typed into the search field.
+  </p>
+
+  <h3>Email and social contact</h3>
+  <p>
+    If you email {PROFILE.email}, your email provider and ours process the
+    message and its metadata. If you open an issue on GitHub or contact me on a
+    social platform, that service processes the content under its own terms.
+    GitHub issues are public by design. Do not send secrets or personal data you
+    would not want retained by those providers.
+  </p>
+
+  <h3>Optional analytics</h3>
+  <p>
+    Google Analytics 4 and Microsoft Clarity integrations are present in the
+    codebase but disabled unless the operator explicitly enables them with
+    valid project identifiers. When enabled, they may collect page views,
+    device and browser information, approximate location, interaction data, and
+    identifiers or cookies controlled by those providers. Tool interfaces are
+    marked to be masked from session recording, and no tool input values or
+    search queries are intentionally sent as analytics events. Clarity can
+    still collect other interaction data outside the masked areas, so enabling
+    it is a privacy decision that requires appropriate notice and, where
+    required, consent.
+  </p>
+
+  <h3>Optional advertising</h3>
+  <p>
+    Google AdSense is not loaded unless a valid publisher configuration is
+    supplied. If advertising is enabled later, Google and its partners may use
+    cookies or similar identifiers to select, measure, and limit ads, subject
+    to their policies and any consent requirements that apply in your region.
+    Ads will be labelled and kept separate from tool controls and editorial
+    content.
+  </p>
+
+  <h3>Donations</h3>
+  <p>
+    Donation links open Buy Me a Coffee, a third-party service. ORIZ.IN does not
+    receive payment card details. The provider processes the payment and account
+    information under its own privacy policy. Donations are voluntary.
+  </p>
+
+  <h2>Cookies and similar technologies</h2>
+  <p>
+    ORIZ.IN’s application does not set its own advertising or analytics cookies.
+    It uses browser <code>localStorage</code> for the preferences described
+    above. Cloudflare may set security or performance-related cookies as the
+    hosting provider. Optional third-party analytics or ads would introduce
+    their own cookies or identifiers only if the operator enables those
+    services. See the <a href="/cookies/">cookies and analytics page</a> for the
+    current status and controls.
+  </p>
+
+  <h2>Why we process data</h2>
+  <ul>
+    <li>
+      <strong>To provide the site</strong> and respond to requests, including
+      ordinary hosting, caching, and security processing.
+    </li>
+    <li>
+      <strong>To answer you</strong> when you send an email or a correction.
+    </li>
+    <li>
+      <strong>With consent, where required</strong>, for optional analytics or
+      advertising that the operator enables.
+    </li>
+    <li>
+      <strong>To protect rights and safety</strong>, including investigating
+      abuse, fraud, or security incidents.
+    </li>
+  </ul>
+
+  <h2>Retention</h2>
+  <p>
+    Browser preferences remain until you clear them. Emails remain in the mail
+    system for as long as needed to answer the request and keep a reasonable
+    record of corrections or legal obligations. Hosting, analytics, advertising,
+    and social providers retain data according to their own policies. ORIZ.IN
+    does not maintain a separate visitor database.
+  </p>
+
+  <h2>Your choices and rights</h2>
+  <p>
+    You can clear local preferences through your browser’s site-data settings,
+    use browser privacy controls, and choose not to interact with third-party
+    services. If you have sent personal information by email, you can ask for
+    access, correction, or deletion by writing to
+    <a href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>. Depending on where
+    you live, you may have additional rights under applicable data-protection
+    law. We will respond within a reasonable period and may ask you to verify
+    that you are the person who sent the original request.
+  </p>
+
+  <h2>Children</h2>
+  <p>
+    ORIZ.IN is a general technical reference intended for adults and is not
+    directed at children under 13. We do not knowingly collect personal
+    information from children. If you believe a child has sent personal
+    information, contact us so we can address it.
+  </p>
+
+  <h2>International processing</h2>
+  <p>
+    Cloudflare and other service providers may process data in countries other
+    than yours. They are responsible for their own transfer mechanisms and
+    safeguards. ORIZ.IN does not deliberately route reader data to additional
+    processors beyond the services described in this policy.
+  </p>
+
+  <h2>Third-party services</h2>
+  <p>
+    The site may link to or optionally load the following providers. Their
+    privacy policies and settings control their processing:
+  </p>
+  <ul>
+    <li><a href="https://www.cloudflare.com/privacypolicy/" rel="noopener noreferrer">Cloudflare</a> (hosting and security)</li>
+    <li><a href="https://policies.google.com/privacy" rel="noopener noreferrer">Google</a> (optional Analytics or AdSense)</li>
+    <li><a href="https://privacy.microsoft.com/privacystatement" rel="noopener noreferrer">Microsoft</a> (optional Clarity)</li>
+    <li><a href="https://www.buymeacoffee.com/privacy-policy" rel="noopener noreferrer">Buy Me a Coffee</a> (voluntary donations)</li>
+    <li><a href="https://github.com/site/privacy" rel="noopener noreferrer">GitHub</a> (code hosting and issue tracker)</li>
+  </ul>
+
+  <h2>Security</h2>
+  <p>
+    The site is delivered over HTTPS, has no login system, and keeps its
+    optional data collection minimal. No internet service can promise perfect
+    security. Use the tools with ordinary care, and never paste production
+    secrets into a web page simply because it processes locally.
+  </p>
+
+  <h2>Changes</h2>
+  <p>
+    This policy may change as the site adds features or optional services. The
+    “last updated” date on this page is the authoritative date. Material changes
+    will be reflected here; continued use after a change means the new policy
+    applies to future visits.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions or requests about privacy:
+    <a href={`mailto:${PROFILE.email}?subject=Privacy%20question`}>{PROFILE.email}</a>.
+    See also the <a href="/cookies/">cookies page</a> and
+    <a href="/terms/">terms of use</a>.
+  </p>
+</LegalLayout>

@@ -1,0 +1,25 @@
+---
+import type { CategorySummary } from '../lib/content';
+import Icon from './Icon.astro';
+
+interface Props {
+  category: CategorySummary;
+}
+
+const { category } = Astro.props;
+const startHereCount = category.guide ? category.guide.data.startHere.length : 0;
+---
+
+<a class="guide-card card card--link" href={category.url}>
+  <span class="card-icon" aria-hidden="true"><Icon name={category.icon} size={20} /></span>
+  <p class="card-kicker">{category.domainTitle}</p>
+  <h3 class="card-title">{category.title}</h3>
+  <p class="card-description">{category.description}</p>
+  <div class="card-foot">
+    <span>
+      {category.articleCount} {category.articleCount === 1 ? 'article' : 'articles'}
+      {startHereCount > 0 ? ` · ${startHereCount} start-here picks` : ''}
+    </span>
+    <span class="card-arrow" aria-hidden="true"><Icon name="arrow-up-right" size={16} /></span>
+  </div>
+</a>

@@ -1,0 +1,44 @@
+---
+import type { ToolDefinition } from '../data/tools';
+import { getCategory } from '../data/taxonomy';
+import Icon from './Icon.astro';
+
+interface Props {
+  tool: ToolDefinition;
+  filterable?: boolean;
+}
+
+const { tool, filterable = false } = Astro.props;
+const category = getCategory(tool.category);
+const href = `/tools/${tool.slug}/`;
+const searchText = [
+  tool.title,
+  tool.description,
+  ...tool.tags,
+  ...tool.keywords,
+  category?.title ?? '',
+].join(' ').toLocaleLowerCase();
+---
+
+<article
+  class="tool-card card card--link"
+  data-tool-card
+  data-tool-category={tool.category}
+  data-tool-search={filterable ? searchText : undefined}
+>
+  <div class="card-top">
+    <span class="card-icon" aria-hidden="true">
+      <Icon name={tool.icon} size={20} />
+    </span>
+    {tool.status === 'beta' && <span class="badge badge--beta">Beta</span>}
+  </div>
+  <p class="card-kicker">{category?.title ?? 'Tool'}</p>
+  <h3 class="card-title"><a href={href}>{tool.title}</a></h3>
+  <p class="card-description">{tool.description}</p>
+  <div class="card-foot">
+    <span>Local processing</span>
+    <span class="card-arrow" aria-hidden="true">
+      <Icon name="arrow-up-right" size={17} />
+    </span>
+  </div>
+</article>

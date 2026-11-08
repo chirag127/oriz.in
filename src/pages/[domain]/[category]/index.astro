@@ -1,0 +1,195 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import LibrarySidebar from '../../../components/LibrarySidebar.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import ToolCard from '../../../components/ToolCard.astro';
+import Toc from '../../../components/Toc.astro';
+import { articleUrl, formatDate, getCategoryData, loadContentIndex } from '../../../lib/content';
+import { getCategory, liveCategories } from '../../../data/taxonomy';
+import { webPageSchema } from '../../../lib/seo';
+
+export function getStaticPaths() {
+  return liveCategories().map((category) => ({
+    params: { domain: category.domain, category: category.slug },
+  }));
+}
+
+const { domain: domainSlug, category: categorySlug } = Astro.params;
+if (!domainSlug || !categorySlug) throw new Error('Missing category path.');
+const category = getCategory(categorySlug);
+if (!category || category.domain !== domainSlug) throw new Error(`Category “${categorySlug}” is not in “${domainSlug}”.`);
+const data = await getCategoryData(categorySlug);
+if (!data?.guide) throw new Error(`Category “${categorySlug}” has no complete guide.`);
+const { Content, headings } = await render(data.guide);
+const { articlesById } = await loadContentIndex();
+const startHere = data.guide.data.startHere
+  .map((slug) => articlesById.get(slug))
+  .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+const seriesGroups = data.groups.filter((group) => group.articles.length > 0);
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Library', href: '/library/' },
+  { label: data.category.domainTitle, href: `/${domainSlug}/` },
+  { label: category.title },
+];
+const jsonLd = [
+  webPageSchema(category.title, category.description, data.category.url),
+];
+---
+
+<BaseLayout
+  title={data.guide.data.title}
+  description={data.guide.data.description}
+  image={data.guide.data.heroImage}
+  keywords={[category.title, data.category.domainTitle, ...seriesGroups.map((group) => group.series.title)]}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+  bodyClass="guide-page"
+>
+  <div class="container library-layout">
+    <LibrarySidebar currentDomain={domainSlug} currentCategory={categorySlug} />
+    <main class="library-main guide-main">
+      <header class="guide-hero">
+        <figure class="guide-hero-figure">
+          <img
+            src={data.guide.data.heroImage}
+            alt={data.guide.data.heroImageAlt}
+            width="1200"
+            height="630"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </figure>
+        <div class="guide-hero-copy">
+          <p class="eyebrow">{data.category.domainTitle} · Complete guide</p>
+          <h1>{data.guide.data.title}</h1>
+          <p class="guide-hero-description">{data.guide.data.description}</p>
+          <div class="guide-meta">
+            <span>Updated {formatDate(data.guide.data.updated)}</span>
+            <span>{data.category.articleCount} articles</span>
+            <span>{seriesGroups.length} series</span>
+          </div>
+        </div>
+      </header>
+
+      {data.guide.data.keyQuestions.length > 0 && (
+        <section class="guide-questions" aria-labelledby="key-questions">
+          <h2 id="key-questions">The questions this guide answers</h2>
+          <div class="guide-question-grid">
+            {data.guide.data.keyQuestions.map((item) => (
+              <article class="guide-question">
+                <h3>{item.question}</h3>
+                <p>{item.answer}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {startHere.length > 0 && (
+        <section class="guide-start" aria-labelledby="start-here">
+          <div class="category-section-head">
+            <h2 id="start-here">Start here</h2>
+            <p>The shortest route into this category.</p>
+          </div>
+          <ol class="guide-start-list">
+            {startHere.map((entry, index) => (
+              <li>
+                <span class="guide-start-number">{String(index + 1).padStart(2, '0')}</span>
+                <a href={articleUrl(entry)}>{entry.data.title}</a>
+                <span>{entry.data.description}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      <div class="prose guide-prose">
+        <Content />
+      </div>
+
+      {seriesGroups.length > 0 && (
+        <section class="guide-articles" aria-labelledby="guide-articles">
+          <div class="category-section-head">
+            <h2 id="guide-articles">Every article in this guide</h2>
+            <p>Read the series in order, or jump to the question you arrived with.</p>
+          </div>
+          {seriesGroups.map((group) => (
+            <section class="guide-series-block" aria-labelledby={`series-${group.series.slug}`}>
+              <div class="guide-series-head">
+                <h3 id={`series-${group.series.slug}`}>{group.series.title}</h3>
+                <p>{group.series.description}</p>
+              </div>
+              <div class="article-grid">
+                {group.articles.map((entry) => <ArticleCard article={entry} />)}
+              </div>
+            </section>
+          ))}
+        </section>
+      )}
+
+      {data.tools.length > 0 && (
+        <section class="guide-tools" aria-labelledby="guide-tools">
+          <div class="category-section-head">
+            <h2 id="guide-tools">Tools for this guide</h2>
+            <a class="section-link" href="/tools/">All tools</a>
+          </div>
+          <div class="grid grid--3">
+            {data.tools.map((tool) => <ToolCard tool={tool} />)}
+          </div>
+        </section>
+      )}
+
+      {data.guide.data.faq.length > 0 && (
+        <section class="guide-faq" aria-labelledby="guide-faq">
+          <h2 id="guide-faq">Frequently asked questions</h2>
+          <div class="guide-faq-list">
+            {data.guide.data.faq.map((item) => (
+              <details>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
+
+    <aside class="article-aside guide-aside">
+      <Toc headings={headings} />
+
+      <div class="side-card">
+        <h2>At a glance</h2>
+        <dl class="guide-facts">
+          <div><dt>Domain</dt><dd><a href={`/${domainSlug}/`}>{data.category.domainTitle}</a></dd></div>
+          <div><dt>Guide length</dt><dd>{data.category.articleCount} articles</dd></div>
+          <div><dt>Series</dt><dd>{seriesGroups.length}</dd></div>
+          <div><dt>Tools</dt><dd>{data.tools.length}</dd></div>
+        </dl>
+      </div>
+
+      {startHere.length > 0 && (
+        <div class="side-card">
+          <h2>Reading order</h2>
+          <ol class="aside-reading-list">
+            {startHere.map((entry) => (
+              <li><a href={articleUrl(entry)}>{entry.data.title}</a></li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      <div class="side-card aside-share">
+        <h2>Share this guide</h2>
+        <div class="aside-share-links">
+          <a href={`https://x.com/intent/tweet?text=${encodeURIComponent(data.guide.data.title)}&url=${encodeURIComponent(new URL(data.category.url, 'https://oriz.in').toString())}`} target="_blank" rel="noopener noreferrer">X</a>
+          <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(new URL(data.category.url, 'https://oriz.in').toString())}`} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href={`mailto:?subject=${encodeURIComponent(data.guide.data.title)}&body=${encodeURIComponent(new URL(data.category.url, 'https://oriz.in').toString())}`}>Email</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

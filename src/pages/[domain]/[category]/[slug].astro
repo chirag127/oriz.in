@@ -1,0 +1,29 @@
+---
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { articleLocation, loadContentIndex } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const { articles, locations } = await loadContentIndex();
+  return articles.map((entry) => {
+    const location = locations.get(entry.id);
+    if (!location) throw new Error(`Article “${entry.id}” has no library location.`);
+    return {
+      params: {
+        domain: location.domain,
+        category: location.category,
+        slug: entry.id,
+      },
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const location = articleLocation(entry);
+const { domain, category, slug } = Astro.params;
+if (domain !== location.domain || category !== location.category || slug !== entry.id) {
+  throw new Error(`Article route does not match library location for “${entry.id}”.`);
+}
+---
+
+<ArticleLayout entry={entry} />

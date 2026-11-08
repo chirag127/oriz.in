@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LibrarySidebar from '../../components/LibrarySidebar.astro';
+import GuideCard from '../../components/GuideCard.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import Icon from '../../components/Icon.astro';
+import { getDomainData } from '../../lib/content';
+import { getDomain, liveDomains } from '../../data/taxonomy';
+import { webPageSchema } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return liveDomains().map((domain) => ({ params: { domain: domain.slug } }));
+}
+
+const { domain: domainSlug } = Astro.params;
+if (!domainSlug) throw new Error('Missing domain slug.');
+const domain = getDomain(domainSlug);
+if (!domain || domain.status !== 'live') throw new Error(`Domain “${domainSlug}” is not live.`);
+const data = await getDomainData(domainSlug);
+if (!data) throw new Error(`Domain “${domainSlug}” has no data.`);
+
+const articleCount = data.categories.reduce((sum, category) => sum + category.articleCount, 0);
+const toolCount = data.tools.length;
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Library', href: '/library/' },
+  { label: domain.title },
+];
+const jsonLd = [
+  webPageSchema(domain.title, domain.description, `/${domain.slug}/`),
+];
+---
+
+<BaseLayout
+  title={`${domain.title} — Complete guides and articles`}
+  description={domain.description}
+  keywords={[domain.title, ...data.categories.map((category) => category.title)]}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container library-layout library-layout--two-col">
+    <LibrarySidebar currentDomain={domain.slug} />
+    <main class="library-main">
+      <header class="domain-hero">
+        <div class="domain-hero-copy">
+          <span class="domain-hero-icon" aria-hidden="true"><Icon name={domain.icon} size={28} /></span>
+          <p class="eyebrow">Library domain</p>
+          <h1>{domain.title}</h1>
+          <p class="domain-hero-description">{domain.description}</p>
+          <div class="domain-hero-meta">
+            <span>{data.categories.length} complete {data.categories.length === 1 ? 'guide' : 'guides'}</span>
+            <span>{articleCount} articles</span>
+            {toolCount > 0 && <span>{toolCount} tools</span>}
+          </div>
+        </div>
+        <figure class="domain-hero-figure">
+          <img
+            src={domain.heroImage}
+            alt={domain.heroImageAlt}
+            width="1200"
+            height="630"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </figure>
+      </header>
+
+      {data.categories.length > 0 && (
+        <section class="library-section" aria-labelledby="domain-guides">
+          <div class="category-section-head">
+            <h2 id="domain-guides">Complete guides</h2>
+            <p>Each guide covers the subject, defines the reading order, and links every article.</p>
+          </div>
+          <div class="grid grid--2">
+            {data.categories.map((category) => <GuideCard category={category} />)}
+          </div>
+        </section>
+      )}
+
+      {data.articles.length > 0 && (
+        <section class="library-section" aria-labelledby="domain-latest">
+          <div class="category-section-head">
+            <h2 id="domain-latest">Latest in {domain.title}</h2>
+          </div>
+          <div class="article-grid">
+            {data.articles.slice(0, 3).map((entry) => <ArticleCard article={entry} />)}
+          </div>
+        </section>
+      )}
+
+      {data.tools.length > 0 && (
+        <section class="library-section" aria-labelledby="domain-tools">
+          <div class="category-section-head">
+            <h2 id="domain-tools">Tools in this domain</h2>
+            <a class="section-link" href="/tools/">All tools</a>
+          </div>
+          <div class="grid grid--3">
+            {data.tools.slice(0, 6).map((tool) => <ToolCard tool={tool} />)}
+          </div>
+        </section>
+      )}
+    </main>
+  </div>
+</BaseLayout>

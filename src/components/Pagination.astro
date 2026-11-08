@@ -1,0 +1,59 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  prevUrl?: string;
+  nextUrl?: string;
+  baseHref: string;
+}
+
+const { currentPage, totalPages, prevUrl, nextUrl, baseHref } = Astro.props;
+const items: (number | 'gap')[] = [];
+for (let page = 1; page <= totalPages; page += 1) {
+  if (page !== 1 && page !== totalPages && Math.abs(page - currentPage) > 1) {
+    if (items.at(-1) !== 'gap') items.push('gap');
+  } else {
+    items.push(page);
+  }
+}
+---
+
+{
+  totalPages > 1 && (
+    <nav class="pagination" aria-label="Pagination">
+      {prevUrl ? (
+        <a class="pagination-prev" href={prevUrl} rel="prev">
+          <Icon name="arrow-right" size={16} class="icon-flip" />
+          Newer
+        </a>
+      ) : (
+        <span class="pagination-disabled">Newer</span>
+      )}
+      <ol>
+        {items.map((item) =>
+          item === 'gap' ? (
+            <li class="pagination-gap" aria-hidden="true">…</li>
+          ) : item === currentPage ? (
+            <li>
+              <span aria-current="page">{item}</span>
+            </li>
+          ) : (
+            <li>
+              <a href={item === 1 ? baseHref : `${baseHref}${item}/`}>{item}</a>
+            </li>
+          ),
+        )}
+      </ol>
+      {nextUrl ? (
+        <a class="pagination-next" href={nextUrl} rel="next">
+          Older
+          <Icon name="arrow-right" size={16} />
+        </a>
+      ) : (
+        <span class="pagination-disabled">Older</span>
+      )}
+    </nav>
+  )
+}

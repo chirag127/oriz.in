@@ -1,0 +1,191 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Icon from '../components/Icon.astro';
+import { webPageSchema } from '../lib/seo';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Diagrams' },
+];
+const jsonLd = [
+  webPageSchema(
+    'Diagrams and visual explainers',
+    'Text-based diagrams, accessible source fallbacks, and the Mermaid editor at ORIZ.IN.',
+    '/diagrams/',
+  ),
+];
+---
+
+<BaseLayout
+  title="Diagrams & visual explainers"
+  description="Explain systems with text-based Mermaid diagrams, keep the source in version control, and give every visual a useful fallback."
+  keywords={['Mermaid diagrams', 'flowcharts', 'sequence diagrams', 'visual explainers', 'diagram editor']}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="Visual thinking"
+      title="Draw the system where you can review it."
+      description="Diagrams belong in the repository beside the code and the prose. Mermaid turns a small text file into a flow, a sequence, or an entity map that a reviewer can diff."
+      meta={['Text source in Git', 'Accessible fallbacks', 'Browser editor']}
+    >
+      <Fragment slot="aside">
+        <div class="side-card">
+          <h2>Make one now</h2>
+          <p>
+            The <a href="/tools/mermaid-editor/">Mermaid editor</a> renders
+            locally and exports SVG. Nothing you draw is uploaded.
+          </p>
+        </div>
+      </Fragment>
+    </PageIntro>
+
+    <div class="page-body">
+      <div class="diagram-band" style="margin-top: 0">
+        <div>
+          <h2 style="font-size: clamp(1.8rem, 3.4vw, 2.4rem)">Why text diagrams hold up</h2>
+          <p class="lead" style="margin-top: 0.7rem">
+            A binary image cannot be reviewed in a pull request. A text diagram
+            can be edited, versioned, and checked alongside an explanation.
+            Rendering is the final step, not the source.
+          </p>
+          <div class="principles" style="margin-top: 1.5rem">
+            <div class="principle">
+              <h3>Diffable</h3>
+              <p>Edits show up as text changes in review.</p>
+            </div>
+            <div class="principle">
+              <h3>Portable</h3>
+              <p>Mermaid renders in many docs tools and browsers.</p>
+            </div>
+            <div class="principle">
+              <h3>Fallback ready</h3>
+              <p>The source remains available if rendering fails.</p>
+            </div>
+          </div>
+        </div>
+        <div class="mini-diagram" aria-label="Diagram publishing flow">
+          <div class="mini-diagram-bar">
+            <span class="mini-diagram-dot"></span><span class="mini-diagram-dot"></span><span class="mini-diagram-dot"></span>
+            <span class="mini-diagram-name">release-flow.mmd</span>
+          </div>
+          <div class="flow">
+            <div class="flow-node">Markdown</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">Mermaid source</div>
+          </div>
+          <div class="flow-down">↓</div>
+          <div class="flow-row">
+            <div class="flow-node flow-node--accent">Browser render</div>
+            <div class="flow-node">SVG</div>
+            <div class="flow-node">Source details</div>
+          </div>
+          <p class="mini-diagram-caption">
+            If rendering fails, the source is still readable.
+          </p>
+        </div>
+      </div>
+
+      <section class="section" style="padding-bottom: 0">
+        <div class="section-head">
+          <div class="section-head-main">
+            <p class="eyebrow">Supported shapes</p>
+            <h2>Pick the diagram that answers the question.</h2>
+          </div>
+          <a class="section-link" href="/tools/mermaid-editor/">
+            Open the editor
+            <Icon name="arrow-right" size={16} />
+          </a>
+        </div>
+        <div class="grid grid--3">
+          <article class="card">
+            <span class="card-icon" aria-hidden="true"><Icon name="chart" size={20} /></span>
+            <p class="card-kicker">Flowchart</p>
+            <h3 class="card-title">When behaviour branches</h3>
+            <p class="card-description">
+              Use actions and decisions to explain validation, retries, or
+              approval paths. Label every decision edge with the condition.
+            </p>
+          </article>
+          <article class="card">
+            <span class="card-icon" aria-hidden="true"><Icon name="layers" size={20} /></span>
+            <p class="card-kicker">Sequence</p>
+            <h3 class="card-title">When order matters</h3>
+            <p class="card-description">
+              Show the messages between browser, API, database, and worker.
+              Make acknowledgements and failure paths visible.
+            </p>
+          </article>
+          <article class="card">
+            <span class="card-icon" aria-hidden="true"><Icon name="database" size={20} /></span>
+            <p class="card-kicker">Entity relationship</p>
+            <h3 class="card-title">When relationships matter</h3>
+            <p class="card-description">
+              Show cardinality between concepts. Keep constraints and indexes
+              in prose or schema, not hidden in a diagram.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" style="padding-bottom: 0">
+        <div class="section-head">
+          <div class="section-head-main">
+            <p class="eyebrow">Start with source</p>
+            <h2>A tiny flowchart is a complete explanation.</h2>
+            <p class="section-description">
+              Paste this into the editor, then add the failure path that matters
+              to your system.
+            </p>
+          </div>
+        </div>
+        <div class="code-block">
+          <div class="code-block-head">
+            <span>mermaid</span>
+            <span>flowchart</span>
+          </div>
+          <pre><code>{`flowchart TD
+  A[Submit form] --> B{Valid input?}
+  B -- No --> C[Show field errors]
+  B -- Yes --> D[Save record]
+  D --> E[Return confirmation]
+  C --> A`}</code></pre>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="section-head-main">
+            <p class="eyebrow">Go deeper</p>
+            <h2>Diagrams are documentation, not decoration.</h2>
+          </div>
+        </div>
+        <div class="article-tools-list">
+          <a href="/technology/developer-craft/diagramming-with-mermaid/">
+            Diagramming with Mermaid
+            <span>Text diagrams, accessibility, security, and rendering trade-offs</span>
+          </a>
+          <a href="/technology/developer-craft/">
+            Diagrams category
+            <span>The editor and related writing in one place</span>
+          </a>
+          <a href="/technology/networking/ipv4-subnetting-guide/">
+            IPv4 subnetting guide
+            <span>An example of visual reasoning around addresses and boundaries</span>
+          </a>
+          <a href="/tools/mermaid-editor/">
+            Mermaid editor
+            <span>Write, preview, and export a diagram locally</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initCodeCopy } from '../scripts/copy-code';
+  initCodeCopy();
+</script>

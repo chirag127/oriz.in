@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import Icon from '../../components/Icon.astro';
+import { LEARNING_PATHS } from '../../data/learning-paths';
+import {
+  getLearningPathSteps,
+  loadContentIndex,
+} from '../../lib/content';
+import { webPageSchema } from '../../lib/seo';
+
+const { articlesById } = await loadContentIndex();
+const paths = LEARNING_PATHS.map((path) => ({
+  ...path,
+  steps: getLearningPathSteps(path, articlesById),
+}));
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Learn' },
+];
+const jsonLd = [
+  webPageSchema(
+    'Learning paths',
+    'Ordered routes through the ORIZ.IN library for practical web foundations, personal finance, and network debugging.',
+    '/learn/',
+  ),
+];
+---
+
+<BaseLayout
+  title="Learning paths"
+  description="Follow an ordered route through the ORIZ.IN library: web foundations, personal finance, and network debugging. Free and self-paced."
+  keywords={['learning paths', 'study guide', 'web development', 'personal finance', 'networking']}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="Learn"
+      title="A route beats a pile of tabs."
+      description="Each path puts articles and working tools in a deliberate order. There is no enrolment, no account, and no completion certificate to chase — just a clear next step."
+      meta={[
+        `${paths.length} learning paths`,
+        'Self-paced',
+        'Free to read',
+      ]}
+    />
+
+    <div class="page-body">
+      <div class="learn-grid">
+        {paths.map((path) => (
+          <article class="path-card">
+            <div class="chips">
+              <span class="badge">{path.level}</span>
+              <span class="badge badge--quiet">{path.time}</span>
+            </div>
+            <h2>{path.title}</h2>
+            <p>{path.description}</p>
+            <ul class="path-preview">
+              {path.steps.slice(0, 3).map((step) => (
+                <li>{step.title}</li>
+              ))}
+              {path.steps.length > 3 && (
+                <li>+ {path.steps.length - 3} more resources</li>
+              )}
+            </ul>
+            <div class="path-meta">
+              <span class="chip">
+                {path.steps.length} {path.steps.length === 1 ? 'step' : 'steps'}
+              </span>
+              <span class="chip">{path.audience}</span>
+            </div>
+            <a class="btn btn--secondary btn--small" href={`/learn/${path.slug}/`}>
+              Start the path
+              <Icon name="arrow-right" size={15} />
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <div class="verification-note" style="margin-top: 2.5rem">
+        Progress tracking is optional and stored only in your browser. The
+        reading itself never requires an account.
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,89 @@
+---
+import type { Page } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import type { Article } from '../../lib/content';
+import { loadContentIndex } from '../../lib/content';
+import { webPageSchema } from '../../lib/seo';
+
+export async function getStaticPaths({ paginate }: { paginate: Function }) {
+  const { articles } = await loadContentIndex();
+  return paginate(
+    articles.filter((entry) => !entry.data.noindex),
+    { pageSize: 24 },
+  );
+}
+
+interface Props {
+  page: Page<Article>;
+}
+
+const { page } = Astro.props;
+const pageTitle = page.currentPage === 1 ? 'Articles & field guides' : `Articles & field guides — Page ${page.currentPage}`;
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Articles' },
+];
+const jsonLd = [
+  webPageSchema(
+    'Articles',
+    'Original guides, tutorials, explainers, and reference articles about software, data, the web, finance, and useful tools.',
+    '/articles/',
+  ),
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description="Original, practical writing about software engineering, the web, data, finance, design, and the tools that make everyday work clearer."
+  keywords={['articles', 'guides', 'tutorials', 'software engineering', 'web development']}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="The library"
+      title="Articles, guides, and explanations that earn their space."
+      description="Clear writing with worked examples, stated assumptions, and links to the tools and primary sources behind the ideas. No content farm, no invented expertise."
+      meta={[
+        `${page.total} published ${page.total === 1 ? 'article' : 'articles'}`,
+        'Original writing',
+        'Reviewed and updated',
+      ]}
+    >
+      <Fragment slot="aside">
+        <div class="side-card">
+          <h2>Start with a path</h2>
+          <p>
+            Prefer a sequence to a stack of tabs? The
+            {' '}
+            <a href="/learn/">learning paths</a>
+            {' '}
+            put these resources in a deliberate order.
+          </p>
+        </div>
+      </Fragment>
+    </PageIntro>
+
+    <div class="page-body">
+      <div class="article-grid">
+        {page.data.map((entry, index) => (
+          <ArticleCard
+            article={entry}
+            variant={index === 0 && page.currentPage === 1 ? 'feature' : 'default'}
+          />
+        ))}
+      </div>
+
+      <Pagination
+        currentPage={page.currentPage}
+        totalPages={page.lastPage}
+        prevUrl={page.url.prev ?? undefined}
+        nextUrl={page.url.next ?? undefined}
+        baseHref="/articles/"
+      />
+    </div>
+  </div>
+</BaseLayout>

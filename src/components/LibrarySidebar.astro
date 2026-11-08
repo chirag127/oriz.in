@@ -1,0 +1,104 @@
+---
+import {
+  articleUrl,
+  loadContentIndex,
+} from '../lib/content';
+import {
+  getCategoriesForDomain,
+  getCategoryPath,
+  getSeriesForCategory,
+  liveDomains,
+  type TaxonomyDomain,
+} from '../data/taxonomy';
+
+interface Props {
+  currentDomain?: string;
+  currentCategory?: string;
+  currentSeries?: string;
+  currentArticle?: string;
+}
+
+const { currentDomain, currentCategory, currentArticle } = Astro.props;
+const { categoriesBySlug, seriesArticles } = await loadContentIndex();
+const domains = liveDomains();
+
+function articleList(category: string, series: string) {
+  return seriesArticles.get(`${category}/${series}`) ?? [];
+}
+---
+
+<nav class="library-sidebar" aria-label="Library navigation">
+  <div class="library-sidebar-head">
+    <a href="/library/">All domains</a>
+    {currentCategory && (
+      <a class="library-guide-link" href={getCategoryPath(currentCategory)}>
+        Complete guide
+      </a>
+    )}
+  </div>
+
+  <ol class="library-tree">
+    {domains.map((domain: TaxonomyDomain) => {
+      const categories = getCategoriesForDomain(domain.slug);
+      const isDomainCurrent = domain.slug === currentDomain;
+      return (
+        <li class:list={['library-domain', { 'is-current': isDomainCurrent }]}>
+          <a
+            class="library-domain-link"
+            href={`/${domain.slug}/`}
+            aria-current={isDomainCurrent && !currentCategory ? 'page' : undefined}
+          >
+            {domain.title}
+          </a>
+          <ul class="library-categories">
+            {categories.map((category) => {
+              const summary = categoriesBySlug.get(category.slug);
+              const isCategoryCurrent = category.slug === currentCategory;
+              return (
+                <li class:list={['library-category', { 'is-current': isCategoryCurrent }]}>
+                  <a
+                    class="library-category-link"
+                    href={getCategoryPath(category.slug)}
+                    aria-current={isCategoryCurrent && !currentArticle ? 'page' : undefined}
+                  >
+                    <span>{category.title}</span>
+                    {summary && <span class="library-count">{summary.articleCount}</span>}
+                  </a>
+                  {isCategoryCurrent && (
+                    <div class="library-series-list">
+                      {getSeriesForCategory(category.slug).map((series) => {
+                        const articles = articleList(category.slug, series.slug);
+                        if (articles.length === 0) return null;
+                        return (
+                          <section class="library-series">
+                            <p class="library-series-title">{series.title}</p>
+                            <ol>
+                              {articles.map((entry) => (
+                                <li>
+                                  <a
+                                    href={articleUrl(entry)}
+                                    aria-current={entry.id === currentArticle ? 'page' : undefined}
+                                    class:list={[
+                                      'library-article-link',
+                                      { 'is-current': entry.id === currentArticle },
+                                    ]}
+                                  >
+                                    {entry.data.title}
+                                  </a>
+                                </li>
+                              ))}
+                            </ol>
+                          </section>
+                        );
+                      })}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </li>
+      );
+    })}
+  </ol>
+</nav>

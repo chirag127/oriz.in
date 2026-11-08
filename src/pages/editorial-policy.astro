@@ -1,0 +1,107 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { PROFILE } from '../data/profile';
+---
+
+<LegalLayout
+  title="Editorial policy"
+  description="How ORIZ.IN approaches authorship, AI assistance, sourcing, verification, corrections, advertising, and independence."
+  lastUpdated="25 October 2026"
+>
+  <p>
+    ORIZ.IN publishes practical articles, references, and tools under the
+    editorial responsibility of {PROFILE.name}. This page explains the standards
+    used before publication and the limits of what the site claims.
+  </p>
+
+  <h2>Editorial responsibility</h2>
+  <p>
+    The publisher is responsible for selecting topics, checking claims,
+    publishing corrections, and deciding what is presented as complete. Authors
+    are identified on articles. Where a technical review or external expert
+    review occurred, it will be stated on the article; the absence of such a
+    statement means no independent review should be assumed.
+  </p>
+
+  <h2>AI-assisted drafting</h2>
+  <p>
+    Some articles and tool descriptions may be drafted with the assistance of
+    AI tools. AI output is treated as a starting point, not as a source. Drafts
+    are checked against primary documentation, formal specifications, and the
+    actual behavior of the tools in this repository. The publisher remains
+    responsible for what is published.
+  </p>
+  <p>
+    The site does not invent authors, quotations, citations, research findings,
+    ratings, testimonials, traffic figures, or benchmarks. If a claim cannot be
+    supported, it should be removed or clearly marked as opinion or
+    interpretation.
+  </p>
+
+  <h2>Sourcing and verification</h2>
+  <ul>
+    <li>
+      Technical explanations link to primary sources such as specifications,
+      official documentation, or standards whenever practical.
+    </li>
+    <li>
+      API directory entries state the date on which the endpoint and relevant
+      CORS behavior were checked, and distinguish documented behavior from
+      observed behavior.
+    </li>
+    <li>
+      Tool logic is covered by automated tests where practical, and tool pages
+      disclose meaningful edge cases and limitations.
+    </li>
+    <li>
+      Mathematical and financial explanations state their assumptions. A model
+      is not presented as a prediction of future market performance.
+    </li>
+    <li>
+      External data and quotations retain their licenses and attribution
+      requirements. The site does not republish full third-party articles.
+    </li>
+  </ul>
+
+  <h2>Originality and usefulness</h2>
+  <p>
+    Pages are written to answer a real question or support a real task, not to
+    target a keyword with a thin summary. The site does not publish scraped
+    articles, near-duplicate pages with superficial variations, fake tool
+    interfaces, or placeholder legal pages to inflate its size.
+  </p>
+
+  <h2>Corrections and updates</h2>
+  <p>
+    Substantive errors are corrected rather than quietly left in place. The
+    <a href="/corrections/">corrections policy</a> explains how to report a
+    problem. Where a page changes meaningfully, the updated date is revised.
+    When a tool or API behavior changes, the accompanying article or reference
+    may be updated as well.
+  </p>
+
+  <h2>Independence, ads, and sponsorship</h2>
+  <p>
+    ORIZ.IN is an independent project funded primarily by its publisher, with
+    optional reader support. Advertising is disabled by default and will be
+    labelled if enabled. Sponsorship or a commercial relationship must not buy
+    a favourable recommendation, a fabricated test result, or removal of an
+    accurate criticism. Sponsored content, if ever published, will be
+    identified clearly.
+  </p>
+
+  <h2>Privacy of tools and content</h2>
+  <p>
+    Tools are designed to process input locally unless a page clearly states
+    otherwise. The editorial policy does not override the
+    <a href="/privacy/">privacy policy</a>, and an article should not encourage
+    readers to paste sensitive production data into an interface that does not
+    need it.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Editorial questions, corrections, or disclosure requests:
+    <a href={`mailto:${PROFILE.email}?subject=Editorial%20question`}>{PROFILE.email}</a>.
+  </p>
+</LegalLayout>

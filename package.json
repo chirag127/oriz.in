@@ -1,0 +1,68 @@
+{
+  "name": "oriz.in",
+  "type": "module",
+  "version": "1.0.0",
+  "private": false,
+  "description": "ORIZ.IN — a static-first knowledge, tools, and reference platform.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build && node scripts/postbuild.mjs",
+    "build:fast": "astro build && node scripts/postbuild.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "astro": "astro",
+    "test:browser": "npm run build:fast && node scripts/run-browser-qa.mjs",
+    "test:csp": "npm run build:fast && node scripts/check-csp.mjs",
+    "verify": "npm run check && npm test && npm run build",
+    "test:external": "node scripts/check-external-links.mjs",
+    "env:decrypt": "node scripts/env-secrets.mjs",
+    "env:encrypt": "node scripts/env-secrets.mjs --encrypt"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.4",
+    "@astrojs/react": "^7.1.1",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.4.2",
+    "dompurify": "^3.4.17",
+    "js-yaml": "^5.5.0",
+    "katex": "^0.19.1",
+    "marked": "^18.1.1",
+    "mermaid": "^12.2.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-katex": "^7.0.1",
+    "rehype-slug": "^6.0.0",
+    "remark-math": "^6.0.0",
+    "sharp": "^0.35.5",
+    "unist-util-visit": "^5.2.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "axe-core": "^4.14.0",
+    "puppeteer-core": "^25.16.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.5"
+  },
+  "overrides": {
+    "rehype-katex": {
+      "katex": "$katex"
+    },
+    "micromark-extension-math": {
+      "katex": "$katex"
+    },
+    "mermaid": {
+      "katex": "$katex"
+    }
+  }
+}

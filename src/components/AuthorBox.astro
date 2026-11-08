@@ -1,0 +1,27 @@
+---
+import { PROFILE } from '../data/profile';
+
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<aside class:list={['author-box', { 'author-box--compact': compact }]} aria-label="About the author">
+  <div class="author-monogram" aria-hidden="true">CS</div>
+  <div class="author-box-body">
+    <p class="author-box-kicker">Written by</p>
+    <p class="author-box-name">
+      <a href="/author/chirag-singhal/">{PROFILE.name}</a>
+    </p>
+    <p class="author-box-role">{PROFILE.role} · {PROFILE.currentRole}</p>
+    {!compact && <p class="author-box-bio">{PROFILE.shortBio}</p>}
+    <p class="author-box-links">
+      <a href="/author/chirag-singhal/">Profile</a>
+      <a href="https://github.com/chirag127" rel="noopener noreferrer">GitHub</a>
+      <a href="https://www.linkedin.com/in/chirag127/" rel="noopener noreferrer">LinkedIn</a>
+      <a href={`mailto:${PROFILE.email}`}>Email</a>
+    </p>
+  </div>
+</aside>

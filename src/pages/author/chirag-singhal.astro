@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { PROFILE } from '../../data/profile';
+import { OPEN_API_FAMILY, PROJECTS, PROJECTS_CHECKED } from '../../data/projects';
+import { SITE } from '../../consts';
+import { profilePageSchema, webPageSchema } from '../../lib/seo';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: PROFILE.name },
+];
+
+const socials = PROFILE.socials;
+const relMe = socials
+  .filter((social) => !social.url.startsWith('mailto:'))
+  .map((social) => social.url);
+
+const jsonLd = [
+  profilePageSchema(),
+  webPageSchema(
+    `${PROFILE.name} — ${PROFILE.role}`,
+    PROFILE.shortBio,
+    SITE.authorUrl,
+  ),
+];
+
+const hireEmail = `mailto:${PROFILE.email}?subject=${encodeURIComponent('Opportunity for Chirag Singhal')}`;
+---
+
+<BaseLayout
+  title="Chirag Singhal — Software engineer and AI engineer"
+  description="Chirag Singhal is a software engineer and AI engineer in India, currently a Software Engineering Specialist at TCS. He builds ORIZ.IN and open-source AI, browser, and data tools."
+  type="profile"
+  keywords={[
+    'Chirag Singhal',
+    'software engineer',
+    'AI engineer',
+    'TCS',
+    'Astro developer',
+    'React Native',
+    'MCP server',
+    'TypeScript',
+    'Python',
+  ]}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+  relMe={relMe}
+  bodyClass="author-page"
+>
+  <header class="author-hero">
+    <div class="container author-hero-grid">
+      <div>
+        <p class="eyebrow">Author & maker</p>
+        <h1>{PROFILE.name}</h1>
+        <p class="author-role">{PROFILE.role}</p>
+        <p class="author-hero-bio">{PROFILE.shortBio}</p>
+        <p class="author-availability">
+          <span class="availability-dot" aria-hidden="true"></span>
+          {PROFILE.availability}
+        </p>
+        <div class="btn-row" style="margin-top: 1.3rem">
+          <a class="btn btn--primary" href={hireEmail}>
+            Email me about a role
+            <Icon name="mail" size={16} />
+          </a>
+          <a class="btn btn--secondary" href="https://www.linkedin.com/in/chirag127/" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+          <a class="btn btn--ghost" href={SITE.supportUrl} rel="noopener">
+            Buy me a coffee
+          </a>
+        </div>
+      </div>
+
+      <aside class="author-card" aria-label="Profile summary">
+        <div class="author-monogram author-monogram--large" aria-hidden="true">CS</div>
+        <h2>Currently</h2>
+        <p>{PROFILE.currentRole}</p>
+        <p>{PROFILE.location}</p>
+        <p>
+          <a href={PROFILE.personalSite} rel="noopener noreferrer">me.oriz.in</a>
+          {' '}·{' '}
+          <a href="/about/">About ORIZ.IN</a>
+        </p>
+        <a class="author-contact-email" href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
+        <p class="author-note">
+          Profile details sourced from the public GitHub profile and
+          repositories, reviewed {PROJECTS_CHECKED}. Roles and projects can
+          change; the links are the current record.
+        </p>
+      </aside>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="author-section">
+      <h2>What I work on</h2>
+      <p class="author-section-desc">
+        I care about systems that are useful before they are impressive:
+        browser tools that keep data on the device, AI agents that expose their
+        tool use, and interfaces that make the model underneath visible.
+      </p>
+      <div class="prose" style="margin-top: 1rem">
+        {PROFILE.longBio.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </div>
+      <div class="skills" aria-label="Areas of expertise">
+        {PROFILE.knowsAbout.map((skill) => (
+          <span class="chip">{skill}</span>
+        ))}
+      </div>
+    </section>
+
+    <section class="author-section">
+      <div class="section-head" style="margin-bottom: 0.5rem">
+        <div class="section-head-main">
+          <h2>Selected public work</h2>
+          <p class="section-description">
+            Public repositories, shown with the star counts observed on
+            {' '}
+            {PROJECTS_CHECKED}. Star counts are shown where non-zero; they are a
+            noisy signal, not a measure of quality.
+          </p>
+        </div>
+        <a class="section-link" href="https://github.com/chirag127" rel="noopener noreferrer">
+          GitHub profile
+          <Icon name="arrow-up-right" size={15} />
+        </a>
+      </div>
+      <div class="project-grid">
+        {PROJECTS.map((project) => (
+          <article class="project-card">
+            <div class="project-meta">
+              <span>{project.language}</span>
+              {project.stars > 0 && <span>Stars: {project.stars}</span>}
+            </div>
+            <h3>
+              <a href={project.repo} rel="noopener noreferrer">{project.name}</a>
+            </h3>
+            <p>{project.description}</p>
+            {project.status && <p class="tool-note">{project.status}</p>}
+            <div class="chips">
+              {project.tags.map((tag) => (
+                <span class="chip">{tag}</span>
+              ))}
+            </div>
+            <div class="project-links">
+              <a href={project.repo} rel="noopener noreferrer">Repository</a>
+              {project.homepage && (
+                <a href={project.homepage} rel="noopener noreferrer">Live project</a>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="author-section">
+      <div class="section-head" style="margin-bottom: 0.5rem">
+        <div class="section-head-main">
+          <h2>Open APIs, honestly labelled</h2>
+          <p class="section-description">
+            {OPEN_API_FAMILY.description}
+          </p>
+        </div>
+      </div>
+      <div class="api-family">
+        <div>
+          <p>{OPEN_API_FAMILY.honestNote}</p>
+          <p>
+            The useful engineering work is the consistency: a schema, metadata,
+            a search index, an OpenAPI file, and a static deployment that costs
+            nothing to run. The datasets still need the harder work of
+            sourcing, validation, and upkeep.
+          </p>
+          <div class="tool-actions">
+            <a class="btn btn--secondary btn--small" href={OPEN_API_FAMILY.githubUrl} rel="noopener noreferrer">
+              Browse the repositories
+              <Icon name="arrow-up-right" size={14} />
+            </a>
+            <a class="btn btn--ghost btn--small" href="/technology/web-development/static-json-apis-on-github-pages/">
+              Read the architecture guide
+            </a>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size: 1.02rem">Verified live examples</h3>
+          <ul class="api-family-list">
+            {OPEN_API_FAMILY.liveExamples.map((example) => (
+              <li>
+                <a href={example.url} rel="noopener noreferrer">{example.name}</a>
+                <span>{example.status} · {example.note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="author-section" id="hire">
+      <div class="maker-band" style="border-color: var(--accent); background: var(--bg-soft)">
+        <div>
+          <p class="eyebrow">Hiring or collaborating</p>
+          <h2>Let’s build something useful.</h2>
+          <p>
+            I am open to software engineering and AI engineering opportunities,
+            and to conversations about tools, developer experience, or AI
+            systems. The fastest route is email. A full résumé and role details
+            are available by request.
+          </p>
+        </div>
+        <div class="maker-actions">
+          <a class="btn btn--primary" href={hireEmail}>
+            chirag@oriz.in
+            <Icon name="mail" size={16} />
+          </a>
+          <a class="btn btn--secondary" href="https://www.linkedin.com/in/chirag127/" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="author-section">
+      <h2>Elsewhere</h2>
+      <p class="author-section-desc">
+        The public profiles I actually maintain. Email remains the best way to
+        start a conversation.
+      </p>
+      <div class="social-grid">
+        {socials.map((social) => (
+          <a
+            class="social-link"
+            href={social.url}
+            rel={social.url.startsWith('mailto:') ? undefined : 'me noopener noreferrer'}
+          >
+            <strong>{social.label}</strong>
+            <span>{social.handle}</span>
+          </a>
+        ))}
+      </div>
+      <p class="author-note">
+        ProfilePage and Person structured data on this page include these
+        verified profile links. No invented employer, award, or credential is
+        claimed.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

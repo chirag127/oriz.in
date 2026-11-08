@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import DomainCard from '../../components/DomainCard.astro';
+import { loadContentIndex } from '../../lib/content';
+import { DOMAINS, SHELVES, liveDomains } from '../../data/taxonomy';
+import { webPageSchema } from '../../lib/seo';
+
+const { categories } = await loadContentIndex();
+
+const shelves = SHELVES.map((shelf) => {
+  const domains = liveDomains()
+    .filter((domain) => domain.shelf === shelf.id)
+    .map((domain) => {
+      const domainCategories = categories.filter((category) => category.domain === domain.slug);
+      return {
+        domain,
+        categories: domainCategories,
+        articleCount: domainCategories.reduce((sum, category) => sum + category.articleCount, 0),
+      };
+    });
+  return { ...shelf, domains };
+}).filter((shelf) => shelf.domains.length > 0);
+
+const planned = DOMAINS.filter((domain) => domain.status === 'planned');
+const live = liveDomains();
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Library' },
+];
+const jsonLd = [
+  webPageSchema(
+    'Library',
+    'Browse ORIZ.IN by domain, category, and series: money and finance, work, business, technology, AI, design, health, education, family, law, and civic life.',
+    '/library/',
+  ),
+];
+---
+
+<BaseLayout
+  title="Library — Browse by domain, category, and series"
+  description="A structured library of India-first articles: money and finance, work, business, technology, AI, design, health, education, family, law, and civic life."
+  keywords={['library', 'knowledge domains', 'ORIZ.IN', 'India-first articles']}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="The library"
+      title="Find the subject. Then read the whole argument."
+      description="Every article lives inside a domain, a category guide, and an ordered series. Start with a complete guide or open a category to see its reading order."
+      meta={[
+        `${live.length} live domains`,
+        `${categories.length} complete guides`,
+        `${categories.reduce((sum, category) => sum + category.articleCount, 0)} published articles`,
+      ]}
+    />
+
+    <div class="page-body">
+      {shelves.map((shelf) => (
+        <section class="library-shelf" aria-labelledby={`shelf-${shelf.id}`}>
+          <div class="category-section-head">
+            <h2 id={`shelf-${shelf.id}`}>{shelf.title}</h2>
+            <p>{shelf.description}</p>
+          </div>
+          <div class="grid grid--3">
+            {shelf.domains.map(({ domain, categories: domainCategories, articleCount }) => (
+              <DomainCard
+                domain={domain}
+                categoryCount={domainCategories.length}
+                articleCount={articleCount}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {planned.length > 0 && (
+        <section class="library-shelf library-shelf--planned" aria-labelledby="shelf-planned">
+          <div class="category-section-head">
+            <h2 id="shelf-planned">In preparation</h2>
+            <p>
+              These domains are part of the long-term library map. They will appear in
+              navigation once they have a complete guide and published articles.
+            </p>
+          </div>
+          <ul class="planned-domain-list">
+            {planned.map((domain) => (
+              <li>
+                <strong>{domain.title}</strong>
+                <span>{domain.description}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <div class="verification-note">
+        <strong>How the library works.</strong> Domain pages group complete guides.
+        Category guides explain the subject and put every series in order. Articles
+        carry the detailed arithmetic, code, or source material.
+      </div>
+    </div>
+  </div>
+</BaseLayout>

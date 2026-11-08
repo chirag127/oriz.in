@@ -1,0 +1,83 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { PROFILE } from '../data/profile';
+---
+
+<LegalLayout
+  title="Accessibility statement"
+  description="ORIZ.IN's accessibility goals, implemented features, known limitations, and how to report a barrier."
+  lastUpdated="25 October 2026"
+>
+  <p>
+    ORIZ.IN aims to be usable by people with a wide range of abilities. This
+    statement describes the target, the practices used, and the limitations
+    that remain. It is not a claim of full conformance or an independent
+    certification.
+  </p>
+
+  <h2>Target</h2>
+  <p>
+    The site targets WCAG 2.2 Level AA where practical. Some content and
+    browser-dependent controls may not meet every criterion in every browser,
+    and complex interactive tools need more than an automated check.
+  </p>
+
+  <h2>What the site does</h2>
+  <ul>
+    <li>Uses semantic HTML landmarks, headings, lists, tables, and form labels.</li>
+    <li>Provides a skip-to-content link and visible keyboard focus styles.</li>
+    <li>Supports keyboard operation of navigation, search, menus, and tool controls.</li>
+    <li>Respects <code>prefers-reduced-motion</code> and avoids unnecessary animation.</li>
+    <li>Provides light and dark themes with tested color tokens.</li>
+    <li>Uses responsive layouts that reflow without horizontal scrolling except in deliberately scrollable tables and code blocks.</li>
+    <li>Labels form controls and provides useful error messages and live result announcements in tools.</li>
+    <li>Provides the Mermaid source as a text alternative when a diagram is rendered.</li>
+    <li>Does not rely on color alone to communicate status in its own interface.</li>
+    <li>Provides print styles for articles.</li>
+  </ul>
+
+  <h2>Known limitations</h2>
+  <ul>
+    <li>
+      Mermaid diagrams are SVG representations of structured relationships.
+      Their internal reading order may not fully communicate the diagram’s
+      meaning. The source is available, and essential explanations should be in
+      prose as well.
+    </li>
+    <li>
+      Some tool results update visually. Live regions announce them, but rapid
+      updates can be verbose for screen-reader users. You can change inputs less
+      frequently or use the copy/download output.
+    </li>
+    <li>
+      Native date, time, and color pickers vary in accessibility across
+      browsers and operating systems.
+    </li>
+    <li>
+      Large reference tables can be cumbersome on small screens; they are
+      scrollable and retain table semantics.
+    </li>
+    <li>
+      Optional third-party analysis or advertising is disabled by default. If
+      enabled, those services are outside ORIZ.IN’s full control.
+    </li>
+    <li>
+      The site has not undergone a formal external accessibility audit. Manual
+      keyboard checks and automated build checks reduce risk but do not prove
+      conformance.
+    </li>
+  </ul>
+
+  <h2>Feedback</h2>
+  <p>
+    If you encounter an accessibility barrier, email
+    <a href={`mailto:${PROFILE.email}?subject=Accessibility`}>{PROFILE.email}</a>
+    with the page URL, the browser and assistive technology you use, and what
+    happened. Please describe the barrier precisely; “the page is inaccessible”
+    is hard to act on.
+  </p>
+  <p>
+    Related: <a href="/contact/">contact</a> and
+    <a href="/corrections/">corrections</a>.
+  </p>
+</LegalLayout>

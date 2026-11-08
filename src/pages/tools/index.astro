@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import SupportNote from '../../components/SupportNote.astro';
+import { TOOLS } from '../../data/tools';
+import { loadContentIndex } from '../../lib/content';
+import { webPageSchema } from '../../lib/seo';
+
+const { categories } = await loadContentIndex();
+const toolCategories = categories.filter((category) => category.toolCount > 0);
+const groupedTools = toolCategories.map((category) => ({
+  category,
+  tools: TOOLS.filter((tool) => tool.category === category.slug).sort((a, b) =>
+    a.title.localeCompare(b.title),
+  ),
+}));
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Tools' },
+];
+
+const jsonLd = [
+  webPageSchema(
+    'Tools',
+    'A directory of free, local-processing browser tools for data, text, finance, networking, design, and development.',
+    '/tools/',
+  ),
+];
+---
+
+<BaseLayout
+  title="Tools — Free, private browser utilities"
+  description={`${TOOLS.length} free browser tools for JSON, text, dates, finance, networking, SQL, color, and more. Everything runs locally. No uploads and no accounts.`}
+  keywords={['browser tools', 'developer tools', 'calculators', 'privacy-first tools']}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="Tool directory"
+      title="Small tools that do exactly what they say."
+      description="Every tool is free, works in a modern browser, and processes input on your device. No account, no upload, and no artificial limit hidden behind a sign-up form."
+      meta={[
+        `${TOOLS.length} published tools`,
+        `${toolCategories.length} tool categories`,
+        'Local processing',
+      ]}
+    >
+      <Fragment slot="aside">
+        <div class="side-card">
+          <h2>Why local?</h2>
+          <p>
+            A formatter or calculator should work without sending your text,
+            numbers, or documents to a server. These tools do.
+          </p>
+        </div>
+      </Fragment>
+    </PageIntro>
+
+    <div class="page-body">
+      <div class="listing-toolbar">
+        <label class="sr-only" for="tool-filter">Search tools</label>
+        <input
+          class="input"
+          id="tool-filter"
+          type="search"
+          placeholder="Search tools by name, task, or tag…"
+          autocomplete="off"
+        />
+        <label class="sr-only" for="tool-category">Filter by category</label>
+        <select class="select" id="tool-category">
+          <option value="">All categories</option>
+          {toolCategories.map((category) => (
+            <option value={category.slug}>{category.title}</option>
+          ))}
+        </select>
+        <span class="listing-count" id="tool-count" aria-live="polite">
+          {TOOLS.length} of {TOOLS.length} tools
+        </span>
+      </div>
+
+      <noscript>
+        <p class="tool-info">
+          Filtering needs JavaScript. Every tool is listed below, and each tool
+          page contains its own instructions.
+        </p>
+      </noscript>
+
+      {
+        groupedTools.map((group) => (
+          <section class="tool-directory-category" data-tool-group>
+            <div class="category-section-head">
+              <h2>{group.category.title}</h2>
+              <a class="section-link" href={group.category.url}>
+                Category page
+              </a>
+            </div>
+            <div class="grid grid--3">
+              {group.tools.map((tool) => (
+                <ToolCard tool={tool} filterable />
+              ))}
+            </div>
+          </section>
+        ))
+      }
+
+      <div class="empty-state" id="tool-empty" hidden>
+        No tools match that search. Try a broader term or clear the category
+        filter.
+      </div>
+
+      <div style="margin-top: 2.5rem">
+        <SupportNote />
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initToolFilter } from '../../scripts/filter-tools';
+  initToolFilter();
+</script>

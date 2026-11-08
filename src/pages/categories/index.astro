@@ -1,0 +1,19 @@
+---
+const target = '/library/';
+const canonical = new URL(target, 'https://oriz.in').toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="Browse the ORIZ.IN library by domain, category, and series." />
+    <title>Redirecting to the library</title>
+  </head>
+  <body>
+    <p>The category index has moved. <a href={target}>Browse the library</a>.</p>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { PROFILE } from '../data/profile';
+---
+
+<LegalLayout
+  title="Corrections policy"
+  description="How to report a factual error, broken reference, outdated API note, or accessibility problem at ORIZ.IN, and what happens next."
+  lastUpdated="25 October 2026"
+>
+  <p>
+    ORIZ.IN aims to be accurate, but it is maintained by one person. Errors
+    happen. Corrections are welcome and are handled as editorial work, not as
+    customer-support tickets.
+  </p>
+
+  <h2>What to report</h2>
+  <ul>
+    <li>a factual or mathematical error;</li>
+    <li>a broken internal link or an external source that has moved;</li>
+    <li>an API endpoint, CORS behavior, rate limit, or authentication detail that has changed;</li>
+    <li>a tool result that contradicts its documented behavior;</li>
+    <li>an accessibility barrier or keyboard trap;</li>
+    <li>a licensing, attribution, or copyright concern.</li>
+  </ul>
+
+  <h2>How to report it</h2>
+  <p>
+    Email <a href={`mailto:${PROFILE.email}?subject=Correction`}>{PROFILE.email}</a>
+    with the subject “Correction”. Include:
+  </p>
+  <ol>
+    <li>the page URL;</li>
+    <li>the exact sentence, example, or result that is wrong;</li>
+    <li>why it is wrong;</li>
+    <li>a primary source or a reproducible test, where one applies.</li>
+  </ol>
+  <p>
+    Reproducible tool bugs can also be filed in the
+    {' '}
+    <a href="https://github.com/chirag127/oriz.in/issues" rel="noopener noreferrer">public issue tracker</a>.
+    Do not include passwords, personal data, or private production details in a
+    public issue.
+  </p>
+
+  <h2>What happens next</h2>
+  <p>
+    Reports are reviewed against the source and the current site behavior. When
+    a correction is warranted, the page is updated and its “last updated” date
+    is revised where the page displays one. Significant corrections may be
+    described in the updated text; there is currently no separate public
+    corrections log.
+  </p>
+  <p>
+    There is no guaranteed response time. Corrections are prioritised by
+    severity: a dangerous financial or security error first, then broken
+    references and factual errors, then minor copy edits.
+  </p>
+
+  <h2>What this policy is not</h2>
+  <p>
+    A correction request is not a way to remove accurate criticism, an
+    unfavourable reference entry, or an opinion clearly labelled as such. If you
+    disagree with an interpretation, send the reasoning and a source; the
+    response may be a clarification rather than a deletion.
+  </p>
+
+  <h2>Security reports</h2>
+  <p>
+    For a vulnerability, email {PROFILE.email} with the subject “Security” and
+    enough detail to reproduce the issue. Please do not test against other
+    visitors, exfiltrate data, or cause disruption. This is a small static site;
+    there is no bug bounty program.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Related policies: <a href="/editorial-policy/">editorial policy</a>,
+    <a href="/privacy/">privacy</a>, and <a href="/contact/">contact</a>.
+  </p>
+</LegalLayout>

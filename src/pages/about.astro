@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Icon from '../components/Icon.astro';
+import { PROFILE } from '../data/profile';
+import { TOOLS } from '../data/tools';
+import { loadContentIndex } from '../lib/content';
+import { SITE } from '../consts';
+import { webPageSchema } from '../lib/seo';
+
+const { articles, categories } = await loadContentIndex();
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'About' },
+];
+const jsonLd = [
+  webPageSchema(
+    'About ORIZ.IN',
+    'What ORIZ.IN is, how it is built, who publishes it, and the principles behind its tools and articles.',
+    '/about/',
+  ),
+];
+---
+
+<BaseLayout
+  title="About ORIZ.IN"
+  description="ORIZ.IN is an independent, static-first knowledge and tools library built by Chirag Singhal. Learn what it offers, how it is made, and how it is funded."
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="About"
+      title="A small, independent library for useful work."
+      description="ORIZ.IN is a place for clear explanations and working browser tools. It is not a content farm, a social network, or a disguised lead-generation funnel."
+      meta={[
+        `${TOOLS.length} local tools`,
+        `${articles.filter((entry) => !entry.data.noindex).length} published articles`,
+        `${categories.length} populated categories`,
+      ]}
+    />
+
+    <div class="page-body">
+      <div class="prose">
+        <h2>What this site is</h2>
+        <p>
+          ORIZ.IN collects two kinds of useful things: articles that explain a
+          concept or a workflow, and tools that actually perform the task the
+          page describes. A formatter formats. A calculator calculates. A
+          reference is searchable. Nothing is published as “available” until it
+          works.
+        </p>
+        <p>
+          The initial library covers web development, data formats, networking,
+          personal finance, mathematics, design, accessibility, and developer
+          references. It is designed to grow without turning every new article
+          into a new page architecture or every new calculator into a separate
+          application.
+        </p>
+
+        <h2>What it is not</h2>
+        <ul>
+          <li>It is not a publisher of invented reviews, ratings, or visitor statistics.</li>
+          <li>It is not a financial adviser. Calculators are educational models, not recommendations.</li>
+          <li>It is not a secure vault. The tools run locally, but they are not designed for secrets.</li>
+          <li>It is not a promise that a third-party API will remain available or unchanged.</li>
+        </ul>
+
+        <h2>Principles</h2>
+        <p>
+          <strong>Static first.</strong> Pages are pre-rendered and served as
+          files. The browser only loads interactive code where it is needed.
+        </p>
+        <p>
+          <strong>Local by default.</strong> Tool inputs are processed in the
+          browser. A formatter should not need a server copy of your data.
+        </p>
+        <p>
+          <strong>Registry driven.</strong> Categories, tools, APIs, learning
+          paths, and glossary terms come from validated data. Navigation,
+          indexes, feeds, and public JSON exports are generated from the same
+          source.
+        </p>
+        <p>
+          <strong>Honest limits.</strong> Every tool lists what it does not
+          handle. The API directory shows verification dates. The site does not
+          promise search rankings, AdSense approval, or unlimited free
+          third-party services.
+        </p>
+
+        <h2>How it is built</h2>
+        <p>
+          ORIZ.IN is a statically generated Astro site with selective React
+          islands. Content is written in Markdown and stored in Git. Diagrams
+          are rendered from text with Mermaid; mathematics is typeset at build
+          time with KaTeX. The search index is generated at build time. Data
+          endpoints are static JSON files, not a dynamic API service.
+        </p>
+        <p>
+          The production target is Cloudflare Pages' free tier. There is no
+          application server, database, account system, or required paid
+          service. Analytics and advertising integrations are optional and
+          disabled until explicitly configured.
+        </p>
+        <p>
+          The code and content live in the
+          {' '}
+          <a href={SITE.repoUrl} rel="noopener noreferrer">public repository</a>.
+          Technical documentation and data endpoints are on the
+          {' '}
+          <a href="/developers/">developer resources page</a>.
+        </p>
+
+        <h2>Who publishes it</h2>
+        <p>
+          ORIZ.IN is edited and maintained by
+          {' '}
+          <a href={SITE.authorUrl}>{PROFILE.name}</a>, a software engineer and AI
+          engineer based in India. The public author page lists current work,
+          selected projects, and contact details. Nothing on this site invents a
+          company, an office, an author credential, or a review that does not
+          exist.
+        </p>
+
+        <h2>Independence and funding</h2>
+        <p>
+          The site currently has no paywall and no mandatory advertising. It can
+          be supported voluntarily through
+          {' '}
+          <a href={SITE.supportUrl} rel="noopener noreferrer">Buy Me a Coffee</a>.
+          If advertising is enabled later, placements will be labelled and kept
+          away from tool controls and primary navigation. Sponsorship or paid
+          placement cannot buy a favourable reference entry or a fabricated
+          test result.
+        </p>
+
+        <h2>Policies and contact</h2>
+        <p>
+          The <a href="/privacy/">privacy policy</a>,
+          {' '}
+          <a href="/terms/">terms of use</a>, and
+          {' '}
+          <a href="/editorial-policy/">editorial policy</a>
+          {' '}
+          describe the details. For corrections, roles, or general questions,
+          email
+          {' '}
+          <a href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
+          {' '}
+          or use the <a href="/contact/">contact page</a>.
+        </p>
+      </div>
+
+      <div class="maker-band" style="margin-top: 2.5rem">
+        <div>
+          <h2>Work with the person behind it.</h2>
+          <p>
+            I am open to software engineering and AI engineering opportunities,
+            including work on developer tools and AI systems.
+          </p>
+        </div>
+        <div class="maker-actions">
+          <a class="btn btn--primary btn--small" href={SITE.authorUrl}>
+            Chirag Singhal
+            <Icon name="arrow-right" size={15} />
+          </a>
+          <a class="btn btn--secondary btn--small" href="/contact/">Contact</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,138 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { PROFILE } from '../data/profile';
+---
+
+<LegalLayout
+  title="Terms of use"
+  description="The terms that apply when you use ORIZ.IN, including tool limitations, intellectual property, external services, and liability."
+  lastUpdated="25 October 2026"
+>
+  <p>
+    These terms govern your use of ORIZ.IN, operated by {PROFILE.name}. By using
+    the site, you agree to them. If you do not agree, do not use the site.
+  </p>
+
+  <h2>What the site provides</h2>
+  <p>
+    ORIZ.IN publishes articles, reference material, and client-side tools for
+    general informational and practical purposes. Tools are provided as-is. A
+    tool that performs a calculation or transformation does not guarantee that
+    the result is suitable for your particular financial, legal, operational, or
+    safety-related decision.
+  </p>
+
+  <h2>No professional advice</h2>
+  <p>
+    Content on ORIZ.IN, including financial calculators and commentary, is
+    educational and is not financial, investment, legal, tax, medical, or other
+    professional advice. Financial models use stated assumptions and exclude
+    taxes, fees, inflation, and other real-world factors unless explicitly
+    described. Verify important results with a qualified professional and the
+    primary documents that apply to you.
+  </p>
+
+  <h2>Acceptable use</h2>
+  <p>You agree not to:</p>
+  <ul>
+    <li>use the site in violation of applicable law;</li>
+    <li>attempt to gain unauthorized access to systems or data;</li>
+    <li>interfere with the availability or security of the site or its hosting provider;</li>
+    <li>use automated means in a way that imposes a disproportionate load or violates applicable access rules;</li>
+    <li>misrepresent the origin of the content or imply endorsement by ORIZ.IN;</li>
+    <li>input data you do not have the right to process.</li>
+  </ul>
+  <p>
+    Security research and responsible disclosure are welcome. Contact
+    <a href={`mailto:${PROFILE.email}?subject=Security%20report`}>{PROFILE.email}</a>
+    before taking any action that could affect other users.
+  </p>
+
+  <h2>Intellectual property</h2>
+  <p>
+    Unless a page says otherwise, original editorial content is licensed under
+    Creative Commons Attribution 4.0 International (CC BY 4.0). You may share
+    and adapt it with appropriate attribution and a link to the source. The
+    site’s source code is released under the MIT License. The ORIZ.IN name,
+    logo, and brand identity are not granted for use in a way that suggests
+    endorsement or affiliation.
+  </p>
+  <p>
+    Third-party trademarks, documentation quotes, datasets, and APIs remain the
+    property of their respective owners and are subject to their own licenses
+    and terms. See the <a href="/copyright/">copyright page</a> for details.
+  </p>
+
+  <h2>External links and services</h2>
+  <p>
+    ORIZ.IN links to third-party sites and APIs. We do not control them and are
+    not responsible for their availability, content, security, pricing, or
+    privacy practices. Following an external link is your choice and is governed
+    by that service’s terms. API entries include a verification date and notes,
+    but do not constitute a commitment that a third-party API will remain
+    available or unchanged.
+  </p>
+
+  <h2>Tools and browser behavior</h2>
+  <p>
+    Tools rely on modern browser APIs and may produce different results in
+    different browsers, locales, time zones, or accessibility configurations.
+    Tool pages describe known limitations. You are responsible for reviewing a
+    result before relying on it. Do not use the tools for passwords, private
+    keys, or sensitive production data unless you have independently assessed
+    the risk of doing so in your environment.
+  </p>
+
+  <h2>Ads, donations, and commercial relationships</h2>
+  <p>
+    The site may display clearly labelled advertisements if the operator
+    enables an advertising integration. Voluntary donations do not purchase
+    content placement, a favourable review, or any guarantee. If sponsored
+    content is published in the future, it will be labelled. Advertising and
+    sponsorship do not change the editorial standards described in the
+    <a href="/editorial-policy/">editorial policy</a>.
+  </p>
+
+  <h2>No warranty</h2>
+  <p>
+    To the fullest extent permitted by law, the site and its content are
+    provided without warranties of any kind, express or implied, including
+    warranties of accuracy, fitness for a particular purpose, availability, or
+    non-infringement. We do not promise that the site will be uninterrupted,
+    error-free, or free of harmful components.
+  </p>
+
+  <h2>Limitation of liability</h2>
+  <p>
+    To the fullest extent permitted by law, {PROFILE.name} and ORIZ.IN will not
+    be liable for indirect, incidental, special, consequential, or punitive
+    damages, or for lost profits, data, savings, or opportunities arising from
+    your use of or inability to use the site. Nothing in these terms limits
+    liability that cannot legally be limited.
+  </p>
+
+  <h2>Changes and availability</h2>
+  <p>
+    Content, tools, and URLs may change, be corrected, be deprecated, or be
+    removed. There is no service-level agreement and no promise that a static
+    endpoint or a third-party API will remain stable. Material changes to these
+    terms will be reflected in the “last updated” date.
+  </p>
+
+  <h2>Governing law</h2>
+  <p>
+    These terms are governed by the laws applicable in India, without regard to
+    conflict-of-law rules. Any dispute that cannot be resolved informally will
+    be subject to the jurisdiction of competent courts in India, unless
+    mandatory local law gives you a different right.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about these terms:
+    <a href={`mailto:${PROFILE.email}?subject=Terms%20question`}>{PROFILE.email}</a>.
+    Related policies: <a href="/privacy/">privacy</a>,
+    <a href="/editorial-policy/">editorial</a>,
+    <a href="/corrections/">corrections</a>.
+  </p>
+</LegalLayout>

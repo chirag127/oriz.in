@@ -1,0 +1,198 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolLoader from '../../components/react/ToolLoader.tsx';
+import Icon from '../../components/Icon.astro';
+import { TOOLS, getToolClientConfig, getRelatedTools } from '../../data/tools';
+import { getCategory, getCategoryPath } from '../../data/taxonomy';
+import type { ToolDefinition } from '../../data/tools';
+import { articleUrl, loadContentIndex } from '../../lib/content';
+import { softwareApplicationSchema } from '../../lib/seo';
+import { formatDate } from '../../lib/content';
+
+export function getStaticPaths() {
+  return TOOLS.map((tool) => ({
+    params: { slug: tool.slug },
+    props: { tool },
+  }));
+}
+
+interface Props {
+  tool: ToolDefinition;
+}
+
+const { tool } = Astro.props;
+const { articlesById } = await loadContentIndex();
+const docsEntry = tool.docs ? articlesById.get(tool.docs) : undefined;
+
+const category = getCategory(tool.category);
+const relatedTools = getRelatedTools(tool);
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Tools', href: '/tools/' },
+  ...(category
+    ? [{ label: category.title, href: getCategoryPath(category.slug) }]
+    : []),
+  { label: tool.title },
+];
+const path = `/tools/${tool.slug}/`;
+const jsonLd = [softwareApplicationSchema(tool, path)];
+const clientConfig = getToolClientConfig(tool);
+---
+
+<BaseLayout
+  title={`${tool.title} — Free browser tool`}
+  description={tool.description}
+  keywords={[...tool.keywords, ...tool.tags]}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+  bodyClass="tool-page"
+>
+  <header class="tool-page-header">
+    <div class="container">
+      <div class="tool-page-header-inner">
+      <div class="tool-topline">
+        {category && (
+          <a href={getCategoryPath(category.slug)}>{category.title}</a>
+        )}
+        <span class="meta-dot" aria-hidden="true"></span>
+        <span>Free · Local processing</span>
+        {tool.status === 'beta' && (
+          <>
+            <span class="meta-dot" aria-hidden="true"></span>
+            <span class="badge badge--beta">Beta</span>
+          </>
+        )}
+      </div>
+      <h1 class="tool-title">{tool.title}</h1>
+      <p class="tool-summary">{tool.description}</p>
+        <div class="chips article-tags">
+          {tool.tags.map((tag) => (
+            <span class="chip">{tag.replaceAll('-', ' ')}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container tool-page-body">
+    <div class="tool-layout">
+      <div class="tool-content">
+        <noscript>
+          <p class="tool-error">
+            This tool needs JavaScript. It runs entirely in your browser; no
+            input is uploaded to a server.
+          </p>
+        </noscript>
+        <ToolLoader client:load tool={clientConfig} />
+
+        <section class="tool-doc-section" aria-labelledby="how-to-use">
+          <h2 id="how-to-use">How to use it</h2>
+          <ol>
+            {tool.steps.map((step) => (
+              <li>{step}</li>
+            ))}
+          </ol>
+        </section>
+
+        <section class="tool-doc-section" aria-labelledby="limitations">
+          <h2 id="limitations">Known limitations</h2>
+          <ul>
+            {tool.limitations.map((limitation) => (
+              <li>{limitation}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section class="tool-doc-section" aria-labelledby="tool-privacy">
+          <h2 id="tool-privacy">Privacy and data flow</h2>
+          <p>
+            All computation for this tool happens in your browser. The site does
+            not receive your input, files, calculations, or pasted text. The
+            page loads only the code needed for this tool.
+          </p>
+          <p class="tool-note">
+            See the <a href="/privacy/">privacy policy</a> for the full picture,
+            including hosting and optional analytics.
+          </p>
+        </section>
+
+        {docsEntry && (
+          <section class="tool-doc-section">
+            <h2>Further reading</h2>
+            <p>
+              Read the companion guide:
+              {' '}
+              <a href={articleUrl(docsEntry)}>
+                a deeper explanation of the concepts behind this tool
+              </a>
+              .
+            </p>
+          </section>
+        )}
+
+        <p class="tool-note">
+          Found a bug or an unclear result? Send a correction through the
+          {' '}
+          <a href="https://github.com/chirag127/oriz.in/issues" rel="noopener noreferrer">
+            public issue tracker
+          </a>
+          .
+        </p>
+      </div>
+
+      <aside class="tool-sidebar">
+        <div class="side-card">
+          <h2>At a glance</h2>
+          <p>
+            <strong>Category:</strong>{' '}
+            {category ? (
+              <a href={getCategoryPath(category.slug)}>{category.title}</a>
+            ) : (
+              'Tools'
+            )}
+          </p>
+          <p>
+            <strong>Status:</strong> {tool.status === 'beta' ? 'Beta' : 'Stable'}
+          </p>
+          <p>
+            <strong>Updated:</strong> {formatDate(new Date(tool.updated))}
+          </p>
+          <p><strong>Privacy:</strong> Local browser processing</p>
+        </div>
+
+        <div class="side-card">
+          <h2>Private by design</h2>
+          <p class="privacy-note">
+            <Icon name="shield" size={18} />
+            Your input is not sent to ORIZ.IN or to a third party. There is no
+            account and no hidden file upload.
+          </p>
+        </div>
+
+        {relatedTools.length > 0 && (
+          <div class="side-card">
+            <h2>Related tools</h2>
+            <div class="chips">
+              {relatedTools.map((related) => (
+                <a class="chip" href={`/tools/${related.slug}/`}>
+                  {related.title}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div class="side-card">
+          <h2>Support this work</h2>
+          <p>
+            Independent tools take time to build and maintain. You can
+            {' '}
+            <a href="/support/">support ORIZ.IN</a>
+            {' '}
+            if this saved you a few minutes.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

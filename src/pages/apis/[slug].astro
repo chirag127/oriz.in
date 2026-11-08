@@ -1,0 +1,189 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { APIS, getApi, getApiCategory } from '../../data/apis';
+import { absoluteUrl, webPageSchema } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return APIS.map((api) => ({
+    params: { slug: api.slug },
+    props: { api },
+  }));
+}
+
+const { slug } = Astro.params;
+const api = slug ? getApi(slug) : undefined;
+if (!api) throw new Error(`API “${slug}” was not found.`);
+const category = getApiCategory(api.category);
+const relatedApis = (api.related ?? [])
+  .map((related) => getApi(related))
+  .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'APIs', href: '/apis/' },
+  { label: api.name },
+];
+
+const jsonLd = [
+  webPageSchema(api.name, api.description, `/apis/${api.slug}/`),
+  {
+    '@type': 'WebAPI',
+    name: api.name,
+    description: api.description,
+    documentation: api.docsUrl.startsWith('http') ? api.docsUrl : absoluteUrl(api.docsUrl),
+    provider: {
+      '@type': 'Organization',
+      name: api.provider,
+    },
+    termsOfService: api.termsUrl,
+    isAccessibleForFree: true,
+  },
+];
+---
+
+<BaseLayout
+  title={`${api.name} — API notes and examples`}
+  description={api.description}
+  keywords={[api.name, api.provider, category?.label ?? 'API']}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+  bodyClass="api-detail-page"
+>
+  <div class="container">
+    <div class="page-header api-detail-head">
+      <div>
+        <p class="eyebrow">{category?.label ?? 'API'} · {api.provider}</p>
+        <h1>{api.name}</h1>
+        <p class="page-description">{api.description}</p>
+        <div class="api-verification">
+          <span class="status-pill">
+            <Icon name="check" size={14} />
+            Checked {api.lastChecked}
+          </span>
+          <span class="status-pill status-pill--neutral">{api.auth}</span>
+          {api.firstParty && <span class="status-pill status-pill--neutral">First-party</span>}
+        </div>
+      </div>
+      <aside class="api-meta-panel" aria-label="API facts">
+        <dl>
+          <div>
+            <dt>Provider</dt>
+            <dd>{api.provider}</dd>
+          </div>
+          <div>
+            <dt>Auth</dt>
+            <dd>{api.auth}</dd>
+          </div>
+          <div>
+            <dt>Format</dt>
+            <dd>{api.format}</dd>
+          </div>
+          <div>
+            <dt>Browser CORS</dt>
+            <dd>{api.cors.startsWith('Allowed') ? 'Allowed' : api.cors}</dd>
+          </div>
+          <div>
+            <dt>Last checked</dt>
+            <dd>{api.lastChecked}</dd>
+          </div>
+        </dl>
+        <div class="tool-actions" style="margin-top: 0.8rem">
+          <a
+            class="btn btn--secondary btn--small"
+            href={api.docsUrl}
+            rel={api.docsUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+          >
+            Documentation
+            <Icon name="arrow-up-right" size={14} />
+          </a>
+        </div>
+      </aside>
+    </div>
+
+    <div class="page-body">
+      <div class="api-section">
+        <h2>At a glance</h2>
+        <div class="result-lines">
+          <div class="result-line"><span>Base URL</span><code>{api.baseUrl}</code></div>
+          <div class="result-line"><span>Authentication</span><code>{api.authNote}</code></div>
+          <div class="result-line"><span>Pricing</span><code>{api.pricing}</code></div>
+          <div class="result-line"><span>Rate limits</span><code>{api.rateLimit}</code></div>
+          <div class="result-line"><span>CORS</span><code>{api.cors}</code></div>
+          <div class="result-line"><span>Verification</span><code>{api.verification}</code></div>
+        </div>
+      </div>
+
+      <div class="api-section">
+        <h2>Example request</h2>
+        <div class="code-block">
+          <div class="code-block-head">
+            <span>cURL</span>
+            <span>GET</span>
+          </div>
+          <pre><code>{api.exampleRequest}</code></pre>
+        </div>
+
+        <h3>Example response</h3>
+        <div class="code-block">
+          <div class="code-block-head">
+            <span>{api.format}</span>
+            <span>trimmed</span>
+          </div>
+          <pre><code>{api.exampleResponse}</code></pre>
+        </div>
+        {api.exampleNote && <p class="tool-note">{api.exampleNote}</p>}
+      </div>
+
+      <div class="api-section">
+        <h2>Practical notes</h2>
+        <ul>
+          {api.notes.map((note) => (
+            <li>{note}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="api-section">
+        <h2>Licensing and terms</h2>
+        <p>{api.license}</p>
+        {api.termsUrl && (
+          <p>
+            <a href={api.termsUrl} rel="noopener noreferrer">
+              Read the provider’s terms
+            </a>
+            .
+          </p>
+        )}
+        <p class="tool-note">
+          ORIZ.IN is not affiliated with this provider. Availability,
+          rate limits, and terms can change; the verification date above is not
+          a guarantee of current behavior.
+        </p>
+      </div>
+
+      {relatedApis.length > 0 && (
+        <div class="api-section">
+          <h2>Related APIs</h2>
+          <div class="chips">
+            {relatedApis.map((related) => (
+              <a class="chip" href={`/apis/${related.slug}/`}>
+                {related.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p class="tool-note" style="margin-top: 2rem">
+        <a href="/apis/">Back to the API directory</a> · See how these notes were
+        checked in the <a href="/technology/web-development/static-json-apis-on-github-pages/">static API guide</a>.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initCodeCopy } from '../../scripts/copy-code';
+  initCodeCopy();
+</script>

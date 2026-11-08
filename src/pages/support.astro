@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Icon from '../components/Icon.astro';
+import { PROFILE } from '../data/profile';
+import { SITE } from '../consts';
+import { webPageSchema } from '../lib/seo';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Support' },
+];
+const jsonLd = [
+  webPageSchema(
+    'Support ORIZ.IN',
+    'Support the independent articles, tools, and references at ORIZ.IN through Buy Me a Coffee or by sharing the work.',
+    '/support/',
+  ),
+];
+---
+
+<BaseLayout
+  title="Support ORIZ.IN"
+  description="Support independent, privacy-first knowledge and tools. Buy the project a coffee, share a useful page, or get in touch about sponsorship or roles."
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <div class="support-page">
+      <PageIntro
+        eyebrow="Support"
+        title="Keep the useful parts free."
+        description="ORIZ.IN has no paywall, no mandatory account, and no requirement to feed your inputs into someone else’s analytics. If it has saved you time, you can help cover the domain, hosting, and the hours behind the tools."
+        meta={['No subscription required', 'No paywall', 'Independent project']}
+      />
+
+      <div class="support-grid" style="padding-top: 0.5rem">
+        <div class="support-card">
+          <h2>What support pays for</h2>
+          <p>
+            The site is deliberately static and cheap to operate. Support goes
+            toward the domain, deployment infrastructure, testing and
+            accessibility work, and the time required to maintain accurate
+            references and published tools.
+          </p>
+          <ul class="support-list">
+            <li>Keeping every published tool free and account-free.</li>
+            <li>Maintaining current API notes, corrections, and documentation.</li>
+            <li>Adding tested tools and original explainers rather than filler pages.</li>
+            <li>Covering ordinary hosting, domain, and development costs.</li>
+          </ul>
+        </div>
+
+        <div class="donate-box">
+          <h2>Buy me a coffee</h2>
+          <p>
+            A small, one-off contribution through Buy Me a Coffee. No ORIZ.IN
+            account is created, and the button opens a third-party site in your
+            browser.
+          </p>
+          <a class="btn btn--primary" href={SITE.supportUrl} rel="noopener noreferrer">
+            <Icon name="spark" size={16} />
+            {PROFILE.supportLabel}
+          </a>
+          <p class="support-fine">
+            Donations are voluntary and not tax-deductible. Buy Me a Coffee
+            handles payment and its own terms and privacy policy.
+          </p>
+        </div>
+      </div>
+
+      <div class="support-grid">
+        <div class="support-card">
+          <h2>Other ways to help</h2>
+          <ul class="support-list">
+            <li>
+              Share a tool with someone who needs it. Internal linking and
+              genuine recommendations help more than a vague “check out my
+              site”.
+            </li>
+            <li>
+              Report a bug or a wrong reference in the
+              {' '}
+              <a href={SITE.issuesUrl} rel="noopener noreferrer">public issue tracker</a>.
+            </li>
+            <li>
+              Cite the site or an article when the explanation was useful.
+            </li>
+            <li>
+              Send a correction with a source if a claim or example is wrong.
+            </li>
+          </ul>
+        </div>
+        <div class="support-card">
+          <h2>Sponsorship, roles, and collaborations</h2>
+          <p>
+            For a relevant sponsorship, a software or AI engineering role, or a
+            collaboration on developer tools, email
+            {' '}
+            <a href={`mailto:${PROFILE.email}?subject=${encodeURIComponent('ORIZ.IN sponsorship or role')}`}>
+              {PROFILE.email}
+            </a>
+            . I will not invent audience numbers or promise outcomes. Any future
+            paid placement or sponsorship will be labelled.
+          </p>
+          <div class="btn-row">
+            <a class="btn btn--secondary btn--small" href={SITE.authorUrl}>
+              About Chirag
+              <Icon name="arrow-right" size={15} />
+            </a>
+            <a class="btn btn--ghost btn--small" href="/contact/">Contact</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="verification-note" style="margin-top: 2rem">
+        Advertising is disabled by default. If AdSense is enabled after approval,
+        ad placements will be clearly labelled and kept separate from tool
+        controls and editorial content. Support never buys influence over a
+        recommendation or a reference entry.
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,33 @@
+---
+interface Heading {
+  depth: number;
+  text: string;
+  slug: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const visible = headings
+  .filter((heading) => heading.depth === 2 || heading.depth === 3)
+  .map((heading) => ({ ...heading, text: heading.text.replace(/#+$/u, '').trim() }));
+---
+
+{
+  visible.length > 1 && (
+    <details class="toc" open>
+      <summary>On this page</summary>
+      <nav aria-label="Table of contents">
+        <ul>
+          {visible.map((heading) => (
+            <li class:list={[`toc-depth-${heading.depth}`]}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </details>
+  )
+}

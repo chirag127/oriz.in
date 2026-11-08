@@ -1,0 +1,83 @@
+---
+import { FOOTER_GROUPS, SITE } from '../consts';
+
+const groups = FOOTER_GROUPS.map((group) => ({
+  title: group.title,
+  links: group.links.map((link) => ({
+    ...link,
+    external: 'external' in link && link.external,
+  })),
+}));
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a class="brand brand--footer" href="/" aria-label="ORIZ.IN home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" width="30" height="30" focusable="false">
+              <rect width="64" height="64" rx="14" fill="currentColor"></rect>
+              <circle cx="27" cy="32" r="13" fill="none" stroke="#fffefc" stroke-width="7"></circle>
+              <circle cx="47" cy="32" r="5" fill="#1c1917"></circle>
+            </svg>
+          </span>
+          <span class="brand-word">ORIZ<span class="brand-dot">.</span>IN</span>
+        </a>
+        <p class="footer-tagline">
+          Practical knowledge and privacy-first tools for people who build.
+          No accounts, no uploads, no noise.
+        </p>
+        <a
+          class="btn btn--primary btn--small footer-support"
+          href={SITE.supportUrl}
+          rel="noopener"
+        >
+          Buy me a coffee
+        </a>
+        <p class="footer-fineprint">
+          Independent project by
+          <a href="/author/chirag-singhal/">Chirag Singhal</a>.
+        </p>
+      </div>
+
+      <div class="footer-grid">
+        {
+          groups.map((group) => (
+            <div class="footer-group">
+              <h2>{group.title}</h2>
+              <ul>
+                {group.links.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      rel={link.external ? 'noopener noreferrer' : undefined}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>
+        © {year} ORIZ.IN. Editorial content
+        <a href="/copyright/">CC BY 4.0</a>; code
+        <a href={SITE.repoUrl} rel="noopener noreferrer">MIT</a>.
+      </p>
+      <p>
+        <a href="/rss.xml">RSS</a>
+        <span aria-hidden="true">·</span>
+        <a href="/sitemap-index.xml">Sitemap</a>
+        <span aria-hidden="true">·</span>
+        <a href="/developers/#static-data">Data endpoints</a>
+      </p>
+    </div>
+  </div>
+</footer>

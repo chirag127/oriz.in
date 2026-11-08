@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { APIS, API_CATEGORIES } from '../../data/apis';
+import { webPageSchema } from '../../lib/seo';
+
+const groups = API_CATEGORIES.map((category) => ({
+  category,
+  apis: APIS.filter((api) => api.category === category.id),
+})).filter((group) => group.apis.length > 0);
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'APIs' },
+];
+const jsonLd = [
+  webPageSchema(
+    'API directory',
+    'A verified directory of public APIs, official developer interfaces, reference data, and ORIZ.IN static endpoints.',
+    '/apis/',
+  ),
+];
+---
+
+<BaseLayout
+  title="API directory"
+  description="A practical directory of public APIs with verified endpoints, CORS notes, authentication details, rate-limit context, and example requests."
+  keywords={['public APIs', 'API directory', 'developer resources', 'static JSON API']}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="Developer resources"
+      title="Public APIs, with the caveats attached."
+      description="A small directory of APIs I have actually tested. Each entry records its documentation, authentication expectations, browser access, rate-limit context, and the date it was checked."
+      meta={[
+        `${APIS.length} APIs`,
+        'Endpoints tested 25 October 2026',
+        'Third-party services are not operated by ORIZ.IN',
+      ]}
+    >
+      <Fragment slot="aside">
+        <div class="side-card">
+          <h2>Our own endpoints</h2>
+          <p>
+            ORIZ.IN also publishes <a href="/developers/#static-data">static JSON data endpoints</a>
+            generated from the same registries that power this site.
+          </p>
+        </div>
+      </Fragment>
+    </PageIntro>
+
+    <div class="page-body">
+      <div class="listing-toolbar">
+        <label class="sr-only" for="api-filter">Search APIs</label>
+        <input
+          class="input"
+          id="api-filter"
+          type="search"
+          placeholder="Search by name, provider, or category…"
+          autocomplete="off"
+        />
+        <label class="sr-only" for="api-category">Filter API category</label>
+        <select class="select" id="api-category">
+          <option value="">All categories</option>
+          {API_CATEGORIES.map((category) => (
+            <option value={category.id}>{category.label}</option>
+          ))}
+        </select>
+        <span class="listing-count" id="api-count" aria-live="polite">
+          {APIS.length} of {APIS.length} APIs
+        </span>
+      </div>
+
+      <div class="api-groups">
+        {groups.map((group) => (
+          <section class="api-group" data-api-group>
+            <h2>{group.category.label}</h2>
+            <p class="api-group-desc">{group.category.description}</p>
+            <div class="api-group-grid">
+              {group.apis.map((api) => {
+                const searchText = `${api.name} ${api.provider} ${api.description} ${api.category}`.toLocaleLowerCase();
+                return (
+                  <article
+                    class="api-card card--link"
+                    data-api-card
+                    data-api-category={api.category}
+                    data-api-search={searchText}
+                  >
+                    <p class="card-kicker">{api.provider}</p>
+                    <h3>
+                      <a href={`/apis/${api.slug}/`}>{api.name}</a>
+                    </h3>
+                    <p>{api.description}</p>
+                    <div class="api-card-meta">
+                      <span class="badge badge--quiet">{api.auth}</span>
+                      <span class="badge badge--quiet">{api.format}</span>
+                      {api.firstParty && <span class="badge">First-party</span>}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <div class="empty-state" id="api-empty" hidden>
+        No APIs match that search.
+      </div>
+
+      <div class="verification-note" style="margin-top: 2rem">
+        API terms, rate limits, and availability can change without notice. The
+        verification date is shown on each detail page; check the provider’s
+        documentation before depending on a service in production.
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initApiFilter } from '../../scripts/filter-apis';
+  initApiFilter();
+</script>

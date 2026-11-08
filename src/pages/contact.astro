@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Icon from '../components/Icon.astro';
+import { PROFILE } from '../data/profile';
+import { SITE } from '../consts';
+import { webPageSchema } from '../lib/seo';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Contact' },
+];
+const jsonLd = [
+  {
+    '@type': 'ContactPage',
+    name: 'Contact ORIZ.IN',
+    url: `${SITE.url}/contact/`,
+    mainEntity: {
+      '@type': 'Person',
+      name: PROFILE.name,
+      email: PROFILE.email,
+      url: `${SITE.url}${SITE.authorUrl}`,
+    },
+  },
+  webPageSchema(
+    'Contact',
+    'Contact Chirag Singhal about corrections, roles, sponsorships, or ORIZ.IN.',
+    '/contact/',
+  ),
+];
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact Chirag Singhal about a correction, an engineering role, a collaboration, or ORIZ.IN."
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <PageIntro
+      eyebrow="Contact"
+      title="Talk to a person, not a ticket queue."
+      description="ORIZ.IN is a small independent project. Email is the most reliable route; the public issue tracker is best for reproducible bugs and corrections."
+      meta={['Email', 'GitHub issues', 'No contact form or tracking']}
+    />
+
+    <div class="page-body">
+      <div class="support-grid" style="margin-top: 0">
+        <div class="support-card">
+          <h2>Email</h2>
+          <p>
+            For corrections, roles, sponsorships, or general questions:
+          </p>
+          <a class="author-contact-email" href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a>
+          <p class="support-fine">
+            Include the page URL and, for corrections, a source or reproducible
+            detail. I do not promise a response time, and I do not accept
+            requests to publish unsupported claims or undisclosed paid content.
+          </p>
+        </div>
+
+        <div class="support-card">
+          <h2>GitHub</h2>
+          <p>
+            Report a bug or a broken reference through the public issue tracker.
+            The source of the site is public.
+          </p>
+          <div class="btn-row">
+            <a class="btn btn--secondary btn--small" href={SITE.issuesUrl} rel="noopener noreferrer">
+              Open an issue
+              <Icon name="external-link" size={15} />
+            </a>
+            <a class="btn btn--ghost btn--small" href={SITE.repoUrl} rel="noopener noreferrer">
+              Repository
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="support-grid">
+        <div class="support-card">
+          <h2>Roles and collaborations</h2>
+          <p>
+            I am open to software engineering and AI engineering opportunities,
+            as well as collaborations on developer tools, AI agents, and
+            privacy-first product experiences.
+          </p>
+          <p>
+            <a href={SITE.authorUrl}>Read the professional profile</a>
+            {' '}or{' '}
+            <a href="https://www.linkedin.com/in/chirag127/" rel="noopener noreferrer">connect on LinkedIn</a>.
+          </p>
+          <p class="tool-note">
+            A full résumé and role details are available by email request.
+          </p>
+        </div>
+
+        <div class="support-card">
+          <h2>Corrections and privacy</h2>
+          <p>
+            For content corrections, see the
+            {' '}
+            <a href="/corrections/">corrections policy</a>. For privacy
+            questions, read the <a href="/privacy/">privacy policy</a> and email
+            with the subject “Privacy”.
+          </p>
+          <p>
+            There is no contact form or chat widget. Optional analytics are
+            disabled by default; see the privacy policy for the current status.
+          </p>
+        </div>
+      </div>
+
+      <div class="verification-note" style="margin-top: 2rem">
+        Other public profiles are linked from the
+        {' '}
+        <a href={SITE.authorUrl}>author page</a>. Social platforms are
+        third-party services with their own privacy policies.
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,85 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { PROFILE } from '../data/profile';
+import { SITE } from '../consts';
+---
+
+<LegalLayout
+  title="Copyright and licensing"
+  description="Licenses for ORIZ.IN editorial content, source code, brand assets, and third-party material, plus how to report a copyright concern."
+  lastUpdated="25 October 2026"
+>
+  <h2>Editorial content</h2>
+  <p>
+    Unless a page states otherwise, original articles, guides, and editorial
+    explanations are licensed under
+    {' '}
+    <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener noreferrer">
+      Creative Commons Attribution 4.0 International (CC BY 4.0)
+    </a>. You may copy, redistribute, and adapt the material, including
+    commercially, if you give appropriate credit, link to the license, and
+    indicate whether changes were made. You may not imply that ORIZ.IN endorses
+    you or your use.
+  </p>
+  <p>Suggested attribution:</p>
+  <blockquote>
+    “HTTP Status Codes, Explained Without the Guesswork” by Chirag Singhal,
+    ORIZ.IN, licensed CC BY 4.0. Source:
+    https://oriz.in/technology/backend-apis/http-status-codes/
+  </blockquote>
+
+  <h2>Code</h2>
+  <p>
+    The site’s source code is released under the MIT License. See the
+    {' '}
+    <a href={SITE.repoUrl} rel="noopener noreferrer">repository</a> and its
+    <code>LICENSE</code> file. Dependencies retain their own licenses. Before
+    reusing a third-party library, review the version and license in the
+    repository’s dependency lockfile.
+  </p>
+
+  <h2>Brand</h2>
+  <p>
+    The ORIZ.IN name, wordmark, logo, and visual identity are used to identify
+    this project. They are not licensed for use in a way that suggests
+    affiliation, endorsement, or the same source. Do not use the brand to
+    distribute modified content as if it were the original site.
+  </p>
+
+  <h2>Third-party material</h2>
+  <p>
+    Articles may quote or link to specifications, documentation, datasets, and
+    APIs owned by others. Those materials remain under their respective
+    licenses. API entries are summaries and links, not a redistribution of a
+    provider’s full documentation. The license field on an API page describes
+    the provider’s terms as reviewed, not a license granted by ORIZ.IN.
+  </p>
+  <p>
+    Trademarks and product names belong to their owners. Their appearance here
+    is descriptive and does not imply sponsorship.
+  </p>
+
+  <h2>User-provided content</h2>
+  <p>
+    The tools do not upload user content to ORIZ.IN. If you send an email or
+    open a public issue, do not include material you do not have the right to
+    share. Do not send confidential documents or third-party copyrighted work
+    unless you have permission.
+  </p>
+
+  <h2>Copyright concerns</h2>
+  <p>
+    If you believe material on ORIZ.IN infringes your rights, email
+    <a href={`mailto:${PROFILE.email}?subject=Copyright%20concern`}>{PROFILE.email}</a>
+    with the page URL, the work you own, a description of the concern, and your
+    contact details. Legitimate concerns will be investigated promptly; content
+    may be removed or replaced while a claim is reviewed.
+  </p>
+
+  <h2>Questions</h2>
+  <p>
+    For licensing questions, use the same email with the subject
+    “Licensing”. Related: <a href="/terms/">terms of use</a> and
+    <a href="/editorial-policy/">editorial policy</a>.
+  </p>
+</LegalLayout>
