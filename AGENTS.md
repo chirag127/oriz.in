@@ -41,6 +41,19 @@ SOPS's age backend is key-based; it does not support a raw passphrase as the dec
 
 Do not print `.env` contents. Do not paste decrypted values into commits, issue comments, screenshots, or terminal output. If a secret may have leaked, flag it and recommend rotation of the affected credential.
 
+## 📍 Where this project's documentation lives
+
+Documentation is **single-sourced** in the umbrella workspace, not in this repository:
+
+| What | Where |
+|------|-------|
+| This project's bundle | `c:\ws\docs\oriz.inundle.md` |
+| Catalogue | `c:\ws\docs\oriz.in\index.md` |
+| Article standard, diagram rendering, navigation shell | `c:\ws\docs\oriz.in\concepts\` |
+
+There is no `okf/` folder here. One document, one file — nothing is copied. Verify with
+`node c:\ws\scripts\check-okf.mjs`.
+
 ## Project conventions
 
 - Node.js 22.23.4+; the repository currently uses Node 24.
